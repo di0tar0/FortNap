@@ -1,0 +1,39 @@
+[
+    {
+      "id": 1,
+      "title": "PO1 : Couloir de la mort",
+      "description": "Ptit description vite fait bien sympa",
+      "coords": [43.09405, 5.89375]
+    },
+    {
+      "id": 2,
+      "title": "PO2 : Ancien poste de garde",
+      "description": "Un lieu stratégique pour la surveillance",
+      "coords": [43.094425, 5.894]
+    },
+    {
+      "id": 3,
+      "title": "PO3 : Caserne oubliée",
+      "description": "Une caserne historique au cœur du fort",
+      "coords": [43.0945, 5.89345]
+    },
+    {
+      "id": 4,
+      "title": "PO4 : Tour Est",
+      "description": "Tour de repérage sur l'est du Fort",
+      "coords": [43.09478, 5.893578]
+    },
+    {
+      "id": 5,
+      "title": "PO5 : Passage secret",
+      "description": "Un tunnel mystérieux caché sous la cour",
+      "coords": [43.09365, 5.89315]
+    },
+    {
+      "id": 6,
+      "title": "PO6 : Entrée principale",
+      "description": "Accès principal des troupes à l’époque",
+      "coords": [43.0943, 5.89285]
+    }
+  ]
+  
