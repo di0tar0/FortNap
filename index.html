@@ -7,330 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.js"></script>
-
-  <style>
-    :root{
-      --main: #e9dcc5;
-      --secondary: #e9dcc5;
-      --black: #000000;
-      --white: #ffffff;
-    }
-
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      display: none;
-    }
-
-    #loading-screen {
-      position: fixed;
-      inset: 0;
-      background: var(--main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10002;
-    }
-
-    #loading-screen img {
-      width: 150px;
-      animation: pulse infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 0.7;
-      }
-
-      50% {
-        opacity: 1;
-      }
-    }
-
-    #authorization-popup {
-      position: fixed;
-      top: 49%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      height: auto;
-      z-index: 10001;
-      text-align: center;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-    }
-
-    #popup-background {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .popup-text {
-      position: absolute;
-      top: 3px;
-      left: -11px;
-      width: 100%;
-      padding: 0 15px;
-      color: black;
-    }
-
-    .popup-text h2 {
-      color: var(--white);
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .popup-text p {
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .popup-text .highlight {
-      color: #fcb435;
-      font-weight: bold;
-    }
-
-    .popup-buttons {
-      position: absolute;
-      bottom: 22px;
-      left: -9px;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-    }
-
-    .popup-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .popup-btn img {
-      width: 130px;
-      /* adapte selon ton SVG */
-      height: auto;
-    }
-
-    .popup-legal {
-      position: absolute;
-      bottom: 11px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
-      color: #4c65dd;
-      text-decoration: none;
-    }
-
-    #authorize-btn {
-      padding: 5px 20px;
-      font-size: 16px;
-      color: var(--white);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #authorize-btn:hover {
-      background: #0097a7;
-    }
-
-    #info-btn {
-      position: fixed;
-      top: 30px;
-      right: 20px;
-      width: 60px;
-      height: auto;
-      z-index: 9999;
-      cursor: pointer;
-      filter: drop-shadow(2px 2px 10px var(--main)) drop-shadow(2px -2px 10px var(--main)) drop-shadow(-2px 2px 10px var(--main)) drop-shadow(-2px -2px 10px var(--main));
-    }
-
-    #close-btn {
-      position: fixed;
-      top: 30px;
-      left: 20px;
-      width: 60px;
-      height: auto;
-      z-index: 10000;
-      cursor: pointer;
-      transform: translateY(-200%);
-      transition: transform 0.4s ease-in-out;
-      }
-
-    #close-btn.show {
-      transform: translateY(0);
-    }
-
-    #info-popup {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      height: 75vh;
-      background-image: url(img/base.png);
-      background-size: cover;
-      background-position: center;
-      display: none;
-      justify-content: flex-end;
-      align-items: center;
-      z-index: 10000;
-      transform: translateY(100%);
-      transition: transform 0.4s ease-in-out;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 40px;
-    }
-
-    #info-popup.show {
-      transform: translateY(0);
-    }
-
-    .leaflet-control-zoom-in::before {
-      content: "";
-      display: inline-block;
-      background-image: url("img/zoom/+.svg");
-      background-size: cover;
-      width: 35px;
-      height: 31px;
-      margin-left: 3px;
-    }
-
-    .leaflet-control-zoom {
-      display: inline-flex;
-      background-image: url(img/zoom/base.svg);
-      background-size: cover;
-      width: 50px;
-      height: 130px;
-      padding-top: 26px;
-      padding-left: 4px;
-      flex-direction: column;
-      gap: 7%;
-      filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
-     }
-
-    .leaflet-control-zoom-out::before {
-      content: "";
-      display: inline-block;
-      background-image: url("img/zoom/-.svg");
-      background-size: cover;
-      width: 44px;
-      height: 70px;
-    }
-
-    .leaflet-touch .leaflet-control-zoom-in,
-    .leaflet-touch .leaflet-control-zoom-out {
-      font-size: 0;
-    }
-
-    .leaflet-touch .leaflet-bar a {
-      height: 35px;
-    }
-
-    .leaflet-bar a {
-      border-bottom: unset;
-      background-color: unset;
-    }
-
-    .leaflet-bar a:hover,
-    .leaflet-bar b:hover,
-    .leaflet-bar a.leaflet-disabled,
-    .leaflet-bar b.leaflet-disabled {
-      background-color: unset;
-    }
-
-    .leaflet-left .leaflet-control {
-      margin-left: 0;
-    }
-
-    .leaflet-top .leaflet-control {
-      margin-top: 120px;
-    }
-
-    .leaflet-touch .leaflet-bar {
-      border: unset;
-    }
-
-    .info-card {
-      color: white;
-      border-bottom: 1px solid #eee;
-      padding: 10px 20px;
-      width: 80%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-direction: row;
-    }
-
-    .info-card .text {
-      flex: 1;
-    }
-
-    .info-card h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .info-card p {
-      margin: 3px 0;
-      font-size: 14px;
-    }
-
-    .info-card img {
-      width: 54px;
-      height: 54px;
-    }
-
-    #progress-container {
-    position: fixed;
-    bottom: 0;
-    z-index: 9999;
-    text-align: center;
-    color: black;
-    font-family: sans-serif;
-    font-size: 16px;
-    width: 100%;
-    background-color: var(--main);
-    padding-top: 10px;
-    padding-bottom: 15px;
-    filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
-}
-
-#progress-bar {
-    width: 85%;
-    height: 68px;
-    background: url(img/bar/bar0.svg) center / cover no-repeat;
-    margin-top: 5px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#popup-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
-  display: none;
-}
-
-
-  </style>
 </head>
 
 <body>
@@ -347,28 +28,27 @@
   <div id="popup-overlay"></div>
 
   <div id="authorization-popup">
-    <img src="img/Frame.svg" alt="Fond popup" id="popup-background" />
-
-    <div class="popup-text">
-      <h2>Mode plein écran</h2>
-      <p>
-        Pour une <span class="highlight">meilleure expérience</span> nous<br>
-        vous recommandons vivement d’activer<br>
-        le mode <span class="highlight">plein écran</span>.
-      </p>
+    <div class="popup-wrapper">
+      <div class="popup-text">
+        <h2>Mode plein écran</h2>
+        <p>
+          Pour une <span class="highlight">meilleure expérience</span>,<br>
+          nous vous recommandons vivement d’activer<br>
+          le mode <span class="highlight">plein écran</span>.
+        </p>
+      </div>
+      <div class="popup-buttons">
+        <button id="authorize-btn" class="popup-btn">
+          <img src="img/Group 21.svg" alt="C'est parti !" />
+        </button>
+        <button id="deny-btn" class="popup-btn">
+          <img src="img/Group 20.svg" alt="Ça ira..." />
+        </button>
+      </div>
+      <a href="#" class="popup-legal">voir mention légale youhouu</a>
     </div>
-
-    <div class="popup-buttons">
-      <button id="authorize-btn" class="popup-btn left-btn">
-        <img src="img/Group 21.svg" alt="C'est parti !">
-      </button>
-      <button id="deny-btn" class="popup-btn right-btn">
-        <img src="img/Group 20.svg" alt="Ca ira...">
-      </button>
-    </div>
-
-    <a href="#" class="popup-legal">voir mention légale youhouu</a>
   </div>
+
 
   <img id="info-btn" src="img/indicateur.svg" alt="Infos" />
   <img id="close-btn" src="img/indicateur.svg" alt="Fermer" />
@@ -443,7 +123,7 @@ function initMap() {
       noWrap: true,
     }).addTo(map);
 
-    map.setView(userPos, 0);
+    map.setView(userPos, 2.5);
     map.setMaxBounds([
       [43.09339968728266, 5.892423324595689],
       [43.09495145111664, 5.894385603258316]
@@ -522,7 +202,7 @@ function initMovement() {
       if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
         const newIcon = L.icon({
           iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
-          iconSize: [64, 64],
+          iconSize: [48, 48],
           iconAnchor: [24, 48],
           popupAnchor: [0, -48]
         });
@@ -551,34 +231,54 @@ function notifyAndTrack(markerId) {
 
 function showMarkerPopup(marker) {
   const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
+  const hasBeenSeen = seen.includes(marker.id);
+
   const popup = document.getElementById('marker-popup');
-  const bg = document.getElementById('popup-bg');
   const title = document.getElementById('marker-title');
   const desc = document.getElementById('marker-description');
   const play = document.getElementById('marker-play');
+  const popupInner = document.getElementById('popup-inner');
+  window.currentMarkerId = marker.id;
 
-  if (seen.includes(marker.id)) {
-    bg.src = 'img/Frame.svg';
-    play.src = 'img/Play2.svg';
-  } else {
-    bg.src = 'img/Frame2.svg';
-    play.src = 'img/Play1.svg';
-  }
+  popupInner.style.backgroundImage = `url("img/${hasBeenSeen ? "Frame" : "Frame2"}.svg")`;
+  play.src = `img/${hasBeenSeen ? 'Play2' : 'Play1'}.svg`;
 
   title.textContent = marker.title;
   desc.textContent = marker.description;
-  popup.style.display = 'block';
-  document.getElementById('popup-overlay').style.display = 'block';
-}
 
-document.getElementById('info-btn').addEventListener('click', () => {
-  const popup = document.getElementById('info-popup');
-  popup.classList.toggle('show');
   popup.style.display = 'flex';
-  generateInfoCards();
-  toggleCloseBtn(popup.classList.contains('show'));
-  document.getElementById('popup-overlay').style.display = popup.classList.contains('show') ? 'block' : 'none';
-});
+
+  play.onclick = () => {
+    const videoPopup = document.getElementById('video-popup');
+    const video = document.getElementById('popup-video');
+    const videoSource = document.getElementById('video-source');
+
+    const videoSrc = `videos/video${marker.id}.mp4`;
+    videoSource.src = videoSrc;
+    video.load();
+    video.play().then(() => {
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+      video.webkitRequestFullscreen(); // Safari
+    } else if (video.msRequestFullscreen) {
+      video.msRequestFullscreen(); // IE11
+    }})
+
+    videoPopup.style.display = 'flex';
+  };
+
+  function onClickOutside(e) {
+    if (!popupInner.contains(e.target)) {
+      closeAllPopups();
+      document.removeEventListener('click', onClickOutside);
+    }
+  }
+
+  setTimeout(() => {
+    document.addEventListener('click', onClickOutside);
+  }, 0);
+}
 
 function generateInfoCards() {
   const container = document.getElementById('info-popup');
@@ -609,7 +309,14 @@ function closeAllPopups() {
   document.getElementById('marker-popup').style.display = 'none';
   document.getElementById('authorization-popup').style.display = 'none';
   document.getElementById('popup-overlay').style.display = 'none';
-  toggleCloseBtn(false);
+  toggleCloseBtn(false);  
+  const videoPopup = document.getElementById('video-popup');
+  const video = document.getElementById('popup-video');
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+  videoPopup.style.display = 'none';
 }
 
 document.getElementById('close-btn').addEventListener('click', closeAllPopups);
@@ -627,22 +334,41 @@ function resetSeenMarkers() {
   location.reload(); 
 }
 
+
+document.getElementById('video-popup').addEventListener('click', (e) => {
+  const video = document.getElementById('popup-video');
+  if (!video.contains(e.target)) {
+    video.pause();
+    video.currentTime = 0;
+    document.getElementById('video-popup').style.display = 'none';
+  }
+});
+
 </script>
 
 
-<div id="marker-popup" style="display: none; position: fixed; top: 49%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: auto; z-index: 10001; text-align: center; font-family: 'Comic Sans MS', cursive, sans-serif;">
-  <img src="img/Frame.svg" alt="Fond popup" id="popup-bg" style="width: 100%; height: auto; display: block;" />
+<div id="marker-popup" style="display: none; position: fixed; inset: 0; z-index: 10001; justify-content: center; align-items: center; padding: 20px; background-color: rgba(0, 0, 0, 0.5); font-family: 'Poppins', sans-serif;">
+  <div id="popup-inner" style="width: 100%; max-width: 400px; background-image: url('img/Frame.svg'); background-size: cover; background-position: center; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap:20px;">
 
-  <div class="popup-text" style="position: absolute; top: 3px; left: -11px; width: 100%; padding: 0 15px; color: black;">
-    <h2 id="marker-title" style="color: white; font-size: 18px; margin-bottom: 10px;">Titre</h2>
-    <p id="marker-description" style="font-size: 14px; line-height: 1.4;">Description</p>
-  </div>
+    <div class="popup-text" style="text-align: center; display: flex; flex-direction: column; gap: 30px;">
+      <h2 id="marker-title" style="color: white; font-size: 20px; font-family: 'Chunky Felt', cursive; margin: 0;">Titre</h2>
+      <p id="marker-description" style="font-size: 16px; line-height: 1.5; color: black;">Description</p>
+    </div>
 
-  <div class="popup-buttons" style="position: absolute; bottom: 22px; left: -9px; width: 100%; display: flex; justify-content: center;">
-    <button class="popup-btn">
-      <img id="marker-play" src="img/Union.svg" alt="Play" style="width: 60px; height: auto;">
-    </button>
+    <div class="popup-buttons" style="display: flex; justify-content: center;">
+      <button class="popup-btn" style="background: none; border: none; cursor: pointer; padding: 0;">
+        <img id="marker-play" src="img/Union.svg" alt="Play" style="width: 60px; height: auto;">
+      </button>
+    </div>
+
   </div>
+</div>
+
+<div id="video-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 10002; justify-content: center; align-items: center;">
+  <video id="popup-video" controls style="width: 90%; max-width: 800px; border-radius: 10px;">
+    <source id="video-source" src="" type="video/mp4">
+    Votre navigateur ne supporte pas la lecture de vidéo.
+  </video>
 </div>
 
 </body>
