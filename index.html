@@ -15,14 +15,8 @@
 </head>
 
 <body>
-  <button onclick="resetSeenMarkers()" style="
-    position: fixed;
-    top: 13px;
-    z-index: 10000;
-">Réinitialiser les marqueurs</button>
-
   <div id="loading-screen">
-    <img src="img/loading.png" alt="Chargement...">
+    <image src="videos/LOADING.gif" alt="Chargement...">
   </div>
 
   <div id="popup-overlay"></div>
@@ -39,10 +33,10 @@
       </div>
       <div class="popup-buttons">
         <button id="authorize-btn" class="popup-btn">
-          <img src="img/Group 21.svg" alt="C'est parti !" />
+          <img src="img/partie.svg" alt="C'est parti !" />
         </button>
         <button id="deny-btn" class="popup-btn">
-          <img src="img/Group 20.svg" alt="Ça ira..." />
+          <img src="img/ira.svg" alt="Ça ira..." />
         </button>
       </div>
       <a href="#" class="popup-legal">voir mention légale youhouu</a>
@@ -51,7 +45,7 @@
 
 
   <img id="info-btn" src="img/indicateur.svg" alt="Infos" />
-  <img id="close-btn" src="img/indicateur.svg" alt="Fermer" />
+  <img id="close-btn" src="img/croix.svg" alt="Fermer" />
 
 <div id="info-popup">
 </div>
@@ -79,7 +73,7 @@ window.addEventListener('load', () => {
     document.getElementById('popup-overlay').style.display = 'block';
     updateProgressBar();
     initMap().then(loadMarkers);
-  }, 1500);
+  }, 2500);
 });
 
 document.getElementById('authorize-btn').addEventListener('click', () => {
@@ -138,7 +132,7 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 10,
+      radius: 1000000,
       color: 'rgb(249, 178, 46)',
       fillColor: 'rgb(249, 178, 46, 0.5)',
       fillOpacity: 0.2,
@@ -266,6 +260,10 @@ function showMarkerPopup(marker) {
   popup.style.display = 'flex';
 
   play.onclick = () => {
+  if (marker.id === 2) {
+    window.location.href = 'POI/360poi.html';
+    return;
+  }
     const videoPopup = document.getElementById('video-popup');
     const video = document.getElementById('popup-video');
     const videoSource = document.getElementById('video-source');

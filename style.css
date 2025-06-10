@@ -8,7 +8,6 @@
 
 :root{
       --main: #e9dcc5;
-      --secondary: #e9dcc5;
       --black: #000000;
       --white: #ffffff;
     }
@@ -42,11 +41,13 @@
       justify-content: center;
       align-items: center;
       z-index: 10002;
+      padding: 10px;
     }
 
     #loading-screen img {
-      width: 150px;
-      animation: pulse infinite ease-in-out;
+    animation: pulse infinite ease-in-out;
+    max-width: 400px;
+    width: 100%;
     }
 
     @keyframes pulse {
