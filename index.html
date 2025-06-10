@@ -80,11 +80,7 @@ document.getElementById('authorize-btn').addEventListener('click', () => {
   document.getElementById('authorization-popup').style.display = 'none';
   document.getElementById('popup-overlay').style.display = 'none';
   requestFullScreen();
-  navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
-  if (result.state === 'denied') {
-    alert("Veuillez autoriser la géolocalisation dans les paramètres de votre navigateur.");
-  }
-  });
+  navigator.permissions.query({ name: 'geolocation' })
   Notification.permission = "granted";
 });
 
