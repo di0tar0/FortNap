@@ -180,7 +180,7 @@ padding: 10px;
       left: 20px;
       width: 60px;
       height: auto;
-      z-index: 10000;
+      z-index: 10002;
       cursor: pointer;
       transform: translateY(-200%);
       transition: transform 0.4s ease-in-out;
@@ -195,23 +195,24 @@ padding: 10px;
       bottom: 0;
       left: 0;
       width: 100vw;
-      height: 75vh;
+      height: 80vh;
       background-image: url(img/base.png);
       background-size: cover;
       background-position: center;
       display: none;
-      justify-content: flex-end;
+        justify-content: center;
       align-items: center;
       z-index: 10000;
       transform: translateY(100%);
       transition: transform 0.4s ease-in-out;
       flex-direction: column;
-      gap: 12px;
-      padding-bottom: 40px;
+    padding-top: 100px;
     }
 
     #info-popup.show {
       transform: translateY(0);
+        display: flex;
+    flex-direction: column;
     }
 
     .leaflet-control-zoom-in::before {

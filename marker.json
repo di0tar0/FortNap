@@ -25,15 +25,17 @@
     },
     {
       "id": 5,
-      "title": "PO5 : Passage secret",
+            "title": "PO5 : Passage secret",
       "description": "Un tunnel mystérieux caché sous la cour",
-      "coords": [43.09365, 5.89315]
+            "coords": [43.0943, 5.89285]
+
     },
     {
       "id": 6,
       "title": "PO6 : Entrée principale",
       "description": "Accès principal des troupes à l’époque",
-      "coords": [43.0943, 5.89285]
+
+                        "coords": [43.09365, 5.89315]
     }
   ]
   

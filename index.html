@@ -53,7 +53,8 @@
   <img id="info-btn" src="img/indicateur.svg" alt="Infos" />
   <img id="close-btn" src="img/indicateur.svg" alt="Fermer" />
 
-  <div id="info-popup"></div>
+<div id="info-popup">
+</div>
 
   <div id="progress-container">
   Prochain point d’intérêt : <strong>Couloir de la mort</strong>
@@ -137,11 +138,11 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 7.5,
-      color: 'aqua',
-      fillColor: 'rgba(0, 255, 255, 0.2)',
-      fillOpacity: 0.5,
-      weight: 2
+      radius: 10,
+      color: 'rgb(249, 178, 46)',
+      fillColor: 'rgb(249, 178, 46, 0.5)',
+      fillOpacity: 0.2,
+      weight: 1
     }).addTo(map);
 
     resolve();
@@ -168,50 +169,65 @@ async function loadMarkers() {
     const m = L.marker(marker.coords, { icon }).addTo(map);
     m.customId = marker.id;
     m.markerData = marker;
-    m.on('click', () => {
-      showMarkerPopup(marker);
-    });
     markers.push(m);
   });
 
   initMovement();
+
+  generateInfoCards();
 }
 
 function initMovement() {
-  const step = 0.00005;
   const notifiedMarkers = new Set();
 
-  document.addEventListener('keydown', function (e) {
-    const key = e.key.toLowerCase();
-    let [lat, lng] = userPos;
+  if (!navigator.geolocation) {
+    alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    return;
+  }
 
-    if (key === 'z') lat += step;
-    if (key === 's') lat -= step;
-    if (key === 'q') lng -= step;
-    if (key === 'd') lng += step;
+  navigator.geolocation.watchPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      userPos = [lat, lng];
 
-    userPos = [lat, lng];
-    userMarker.setLatLng(userPos);
-    userCircle.setLatLng(userPos);
-    map.setView(userPos, map.getZoom(), { animate: false });
+      userMarker.setLatLng(userPos);
+      userCircle.setLatLng(userPos);
+      map.setView(userPos, map.getZoom(), { animate: false });
 
-    markers.forEach(marker => {
-      const distance = map.distance(userCircle.getLatLng(), marker.getLatLng());
-      const markerId = marker.customId;
+      markers.forEach((marker) => {
+        const distance = map.distance(userCircle.getLatLng(), marker.getLatLng());
+        const markerId = marker.customId;
 
-      if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
-        const newIcon = L.icon({
-          iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
-          iconSize: [48, 48],
-          iconAnchor: [24, 48],
-          popupAnchor: [0, -48]
-        });
-        marker.setIcon(newIcon);
-        notifiedMarkers.add(markerId);
-        notifyAndTrack(markerId);
-      }
-    });
-  });
+        if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
+          const newIcon = L.icon({
+            iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
+            iconSize: [48, 48],
+            iconAnchor: [24, 48],
+            popupAnchor: [0, -48],
+          });
+          marker.setIcon(newIcon);
+          notifiedMarkers.add(markerId);
+          notifyAndTrack(markerId);
+
+          if (!marker._hasClickHandler) {
+            marker.on('click', () => {
+              showMarkerPopup(marker.markerData);
+            });
+            marker._hasClickHandler = true;
+          }
+        }
+      });
+    },
+    (error) => {
+      console.error("Erreur de géolocalisation :", error);
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 5000,
+    }
+  );
 }
 
 function updateProgressBar() {
@@ -226,6 +242,7 @@ function notifyAndTrack(markerId) {
     seenMarkers.push(markerId);
     localStorage.setItem('seenMarkers', JSON.stringify(seenMarkers));
     updateProgressBar();
+    generateInfoCards();
   }
 }
 
@@ -260,9 +277,9 @@ function showMarkerPopup(marker) {
     if (video.requestFullscreen) {
       video.requestFullscreen();
     } else if (video.webkitRequestFullscreen) {
-      video.webkitRequestFullscreen(); // Safari
+      video.webkitRequestFullscreen();
     } else if (video.msRequestFullscreen) {
-      video.msRequestFullscreen(); // IE11
+      video.msRequestFullscreen();
     }})
 
     videoPopup.style.display = 'flex';
@@ -284,17 +301,54 @@ function generateInfoCards() {
   const container = document.getElementById('info-popup');
   container.innerHTML = '';
 
+  const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
+
   markers.forEach(marker => {
+    const hasBeenSeen = seen.includes(marker.customId);
+
     const card = document.createElement('div');
     card.className = 'info-card';
+
+    let playBtnHTML = '';
+    if (hasBeenSeen) {
+      playBtnHTML = `<button class="play-btn" data-id="${marker.customId}" style="background: none;
+    border: none;">
+        <img src="img/union.svg" alt="Play">
+      </button>`;
+    }
+
     card.innerHTML = `
       <div class="text">
         <h3>${marker.markerData.title}</h3>
         <p>${marker.markerData.description}</p>
       </div>
-      <img src="img/union.svg" alt="Icone">
+      ${playBtnHTML}
     `;
+
     container.appendChild(card);
+  });
+
+  const playButtons = document.querySelectorAll('.play-btn');
+  playButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation(); 
+      const id = parseInt(button.dataset.id);
+      const videoSrc = `videos/video${id}.mp4`;
+
+      const videoPopup = document.getElementById('video-popup');
+      const video = document.getElementById('popup-video');
+      const source = document.getElementById('video-source');
+
+      source.src = videoSrc;
+      video.load();
+      video.play().then(() => {
+        if (video.requestFullscreen) video.requestFullscreen();
+        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+        else if (video.msRequestFullscreen) video.msRequestFullscreen();
+      });
+
+      videoPopup.style.display = 'flex';
+    });
   });
 }
 
@@ -328,22 +382,42 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Temporaire
 function resetSeenMarkers() {
   localStorage.removeItem('seenMarkers');
   location.reload(); 
 }
 
+const infoBtn = document.getElementById('info-btn');
+const infoPopup = document.getElementById('info-popup');
 
-document.getElementById('video-popup').addEventListener('click', (e) => {
-  const video = document.getElementById('popup-video');
-  if (!video.contains(e.target)) {
-    video.pause();
-    video.currentTime = 0;
-    document.getElementById('video-popup').style.display = 'none';
-  }
+infoBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  infoPopup.classList.toggle('show');
+  toggleCloseBtn(infoPopup.classList.contains('show'));
+  document.getElementById('popup-overlay').style.display = 'block';
 });
 
+window.addEventListener('click', (e) => {
+  if (!infoPopup.contains(e.target) && !infoBtn.contains(e.target)) {
+    infoPopup.classList.remove('show');
+    toggleCloseBtn(false);
+    document.getElementById('popup-overlay').style.display = 'none';
+  }});
+
+window.addEventListener('load', () => {
+  const videoPopup = document.getElementById('video-popup');
+  const video = document.getElementById('popup-video');
+
+  if (videoPopup && video) {
+    videoPopup.addEventListener('click', (e) => {
+      if (!video.contains(e.target)) {
+        video.pause();
+        video.currentTime = 0;
+        videoPopup.style.display = 'none';
+      }
+    });
+  }
+});
 </script>
 
 
