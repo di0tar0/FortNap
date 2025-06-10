@@ -39,7 +39,7 @@
           <img src="img/ira.svg" alt="Ça ira..." />
         </button>
       </div>
-      <a href="#" class="popup-legal">voir mention légale youhouu</a>
+      <a href="#" class="popup-legal">voir les mentions légales</a>
     </div>
   </div>
 
@@ -80,6 +80,11 @@ document.getElementById('authorize-btn').addEventListener('click', () => {
   document.getElementById('authorization-popup').style.display = 'none';
   document.getElementById('popup-overlay').style.display = 'none';
   requestFullScreen();
+  navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+  if (result.state === 'denied') {
+    alert("Veuillez autoriser la géolocalisation dans les paramètres de votre navigateur.");
+  }
+  });
   Notification.permission = "granted";
 });
 
@@ -132,7 +137,7 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 1000000,
+      radius: 10,
       color: 'rgb(249, 178, 46)',
       fillColor: 'rgb(249, 178, 46, 0.5)',
       fillOpacity: 0.2,
@@ -214,8 +219,12 @@ function initMovement() {
       });
     },
     (error) => {
+      if (error.code === 1) alert("Autorisez la géolocalisation dans votre navigateur.");
+      else if (error.code === 2) alert("Position non disponible.");
+      else if (error.code === 3) alert("La recherche de position a expiré. Essayez dans un endroit dégagé.");
       console.error("Erreur de géolocalisation :", error);
-    },
+    }
+    ,
     {
       enableHighAccuracy: true,
       maximumAge: 0,
