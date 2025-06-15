@@ -734,7 +734,7 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
 }
 
 .info-hotspot-icon{
-  filter: drop-shadow(2px 2px 5px var(--black)) drop-shadow(2px -2px 5px var(--black)) drop-shadow(-2px 2px 5px var(--black)) drop-shadow(-2px -2px 5px var(--black));
+  filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
 }
 
 .info-hotspot-modal .info-hotspot-title-wrapper {

@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Fort Napoléon - Carte Interactive</title>
+  <title>Napoléon Raconte</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -73,6 +73,37 @@ window.addEventListener('load', () => {
     updateProgressBar();
     initMap().then(loadMarkers);
   }, 2500);
+
+  const videoPopup = document.getElementById('video-popup');
+  const video = document.getElementById('popup-video');
+
+  if (videoPopup && video) {
+    videoPopup.addEventListener('click', (e) => {
+      if (!video.contains(e.target)) {
+        video.pause();
+        video.currentTime = 0;
+        videoPopup.style.display = 'none';
+      }
+    });
+  }
+
+  const nextBtn = document.getElementById('next-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const carouselPopup = document.getElementById('carousel-popup');
+  const carouselImage = document.getElementById('carousel-image');
+
+  if (nextBtn && prevBtn && carouselPopup && carouselImage) {
+nextBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  changeSlide(1);
+});
+
+prevBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  changeSlide(-1);
+});
+
+  }
 });
 
 document.getElementById('authorize-btn').addEventListener('click', () => {
@@ -132,7 +163,7 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 10,
+      radius: 100000,
       color: 'rgb(249, 178, 46)',
       fillColor: 'rgb(249, 178, 46, 0.5)',
       fillOpacity: 0.2,
@@ -214,7 +245,7 @@ function initMovement() {
       });
     },
     (error) => {
-      if (error.code === 1) alert("Autorisez la géolocalisation dans votre navigateur.");
+      if (error.code === 1) alert("Veuillez Autoriser la géolocalisation dans votre navigateur.");
       else if (error.code === 2) alert("Position non disponible.");
       else if (error.code === 3) alert("La recherche de position a expiré. Essayez dans un endroit dégagé.");
       console.error("Erreur de géolocalisation :", error);
@@ -268,6 +299,24 @@ function showMarkerPopup(marker) {
     window.location.href = 'POI/360poi.html';
     return;
   }
+
+   if (marker.id === 4) {
+    showCarousel();
+    toggleCloseBtn(true);
+    return;
+  }
+
+if (marker.id === 5) {
+    toggleCloseBtn(true);
+  const imagePopup = document.getElementById('image-popup');
+  const image = document.getElementById('popup-image');
+
+  image.src = 'img/vauban/vauban.png'; 
+  imagePopup.style.display = 'block';
+  document.getElementById('popup-overlay').style.display = 'block';
+  return;
+}
+
     const videoPopup = document.getElementById('video-popup');
     const video = document.getElementById('popup-video');
     const videoSource = document.getElementById('video-source');
@@ -276,6 +325,7 @@ function showMarkerPopup(marker) {
     videoSource.src = videoSrc;
     video.load();
     video.play().then(() => {
+    toggleCloseBtn(true);
     if (video.requestFullscreen) {
       video.requestFullscreen();
     } else if (video.webkitRequestFullscreen) {
@@ -356,23 +406,39 @@ function generateInfoCards() {
 
 function toggleCloseBtn(show) {
   const closeBtn = document.getElementById('close-btn');
+  console.log(show)
   if (show) closeBtn.classList.add('show');
   else closeBtn.classList.remove('show');
 }
 
 function closeAllPopups() {
-  document.getElementById('info-popup').classList.remove('show');
-  document.getElementById('marker-popup').style.display = 'none';
-  document.getElementById('authorization-popup').style.display = 'none';
-  document.getElementById('popup-overlay').style.display = 'none';
-  toggleCloseBtn(false);  
+  const markerPopup = document.getElementById('marker-popup');
+  if (markerPopup) markerPopup.style.display = 'none';
+
+  const infoPopup = document.getElementById('info-popup');
+  if (infoPopup) infoPopup.classList.remove('show');
+
+  const authorizationPopup = document.getElementById('authorization-popup');
+  if (authorizationPopup) authorizationPopup.style.display = 'none';
+
+  const overlay = document.getElementById('popup-overlay');
+  if (overlay) overlay.style.display = 'none';
+
+  toggleCloseBtn(false);
+
   const videoPopup = document.getElementById('video-popup');
   const video = document.getElementById('popup-video');
   if (video) {
     video.pause();
     video.currentTime = 0;
   }
-  videoPopup.style.display = 'none';
+  if (videoPopup) videoPopup.style.display = 'none';
+
+  const carouselPopup = document.getElementById('carousel-popup');
+  if (carouselPopup) carouselPopup.style.display = 'none';
+
+  const vaubanPopup = document.getElementById('image-popup');
+if (vaubanPopup) vaubanPopup.style.display = 'none';
 }
 
 document.getElementById('close-btn').addEventListener('click', closeAllPopups);
@@ -395,31 +461,61 @@ const infoPopup = document.getElementById('info-popup');
 infoBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   infoPopup.classList.toggle('show');
-  toggleCloseBtn(infoPopup.classList.contains('show'));
+  toggleCloseBtn(true);
   document.getElementById('popup-overlay').style.display = 'block';
 });
 
 window.addEventListener('click', (e) => {
-  if (!infoPopup.contains(e.target) && !infoBtn.contains(e.target)) {
-    infoPopup.classList.remove('show');
-    toggleCloseBtn(false);
-    document.getElementById('popup-overlay').style.display = 'none';
-  }});
+  const overlay = document.getElementById('popup-overlay');
+  const imagePopup = document.getElementById('image-popup');
+  const carouselPopup = document.getElementById('carousel-popup');
 
-window.addEventListener('load', () => {
-  const videoPopup = document.getElementById('video-popup');
-  const video = document.getElementById('popup-video');
+  const isImagePopupVisible = imagePopup && imagePopup.style.display === 'flex';
+  const isCarouselVisible = carouselPopup && carouselPopup.style.display === 'flex';
 
-  if (videoPopup && video) {
-    videoPopup.addEventListener('click', (e) => {
-      if (!video.contains(e.target)) {
-        video.pause();
-        video.currentTime = 0;
-        videoPopup.style.display = 'none';
-      }
-    });
+  if (isImagePopupVisible || isCarouselVisible) {
+    return;
+  }
+
+  if (e.target === overlay) {
+    closeAllPopups();
   }
 });
+
+const carouselImages = [
+  'img/carousel/carousel1.jpg',
+  'img/carousel/carousel2.jpg',
+  'img/carousel/carousel3.jpg',
+  'img/carousel/carousel4.jpg',
+  'img/carousel/carousel5.jpg',
+  'img/carousel/carousel6.jpg',
+  'img/carousel/carousel7.jpg',
+  'img/carousel/carousel8.jpg'
+];
+
+let currentSlide = 0;
+
+function showCarousel() {
+  const popup = document.getElementById('carousel-popup');
+  const image = document.getElementById('carousel-image');
+  popup.style.display = 'flex';
+  image.src = carouselImages[currentSlide];
+  console.log('open')
+  document.getElementById('popup-overlay').style.display = 'block'; 
+}
+
+function hideCarousel() {
+  document.getElementById('carousel-popup').style.display = 'none';
+  toggleCloseBtn(false);
+  console.log('close')
+  document.getElementById('popup-overlay').style.display = 'none';
+}
+
+function changeSlide(delta) {
+  currentSlide = (currentSlide + delta + carouselImages.length) % carouselImages.length;
+  document.getElementById('carousel-image').src = carouselImages[currentSlide];
+}
+
 </script>
 
 
@@ -440,13 +536,28 @@ window.addEventListener('load', () => {
   </div>
 </div>
 
-<div id="video-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 10002; justify-content: center; align-items: center;">
+<div id="video-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 10002; justify-content: center; align-items: center;">
   <video id="popup-video" controls style="width: 90%; max-width: 800px; border-radius: 10px;">
     <source id="video-source" src="" type="video/mp4">
     Votre navigateur ne supporte pas la lecture de vidéo.
   </video>
 </div>
 
+<div id="carousel-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 10003; justify-content: center; align-items: end;">
+  <div id="carousel-container" style="position: relative; width: 100%; height: 85%;">
+    <img id="carousel-image" src="" style="width: 100%; object-fit: contain;" alt="Carousel Image">
+    <button id="prev-btn" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;">
+    <img src="img/carousel/gauche.svg" alt="Précédent" style="width: 48px; height: 48px;">
+    </button>
+    <button id="next-btn" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;">
+    <img src="img/carousel/droite.svg" alt="Précédent" style="width: 48px; height: 48px;">
+    </button>
+  </div>
+</div>
+
+<div id="image-popup" style="display: none; position: fixed; inset: 0; z-index: 10003; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; text-align: center;">
+  <img id="popup-image" src="" alt="Lettre" style="width: 100%; height: auto; display: block; margin: auto;" />
+</div>
 </body>
 
 </html>
