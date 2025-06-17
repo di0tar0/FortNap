@@ -381,27 +381,51 @@ function generateInfoCards() {
   });
 
   const playButtons = document.querySelectorAll('.play-btn');
-  playButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-      e.stopPropagation(); 
-      const id = parseInt(button.dataset.id);
-      const videoSrc = `videos/video${id}.mp4`;
+playButtons.forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+    const id = parseInt(button.dataset.id);
 
-      const videoPopup = document.getElementById('video-popup');
-      const video = document.getElementById('popup-video');
-      const source = document.getElementById('video-source');
+    if (id === 2) {
+      window.location.href = 'POI/360poi.html';
+      return;
+    }
 
-      source.src = videoSrc;
-      video.load();
-      video.play().then(() => {
-        if (video.requestFullscreen) video.requestFullscreen();
-        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-        else if (video.msRequestFullscreen) video.msRequestFullscreen();
-      });
+    if (id === 4) {
+      showCarousel();
+      toggleCloseBtn(true);
+      return;
+    }
 
-      videoPopup.style.display = 'flex';
+    if (id === 5) {
+    toggleCloseBtn(true);
+  const imagePopup = document.getElementById('image-popup');
+  const image = document.getElementById('popup-image');
+
+  image.src = 'img/vauban/vauban.png'; 
+  imagePopup.style.display = 'block';
+  document.getElementById('popup-overlay').style.display = 'block';
+  return;
+    }
+
+    const videoSrc = `videos/video${id}.mp4`;
+    const videoPopup = document.getElementById('video-popup');
+    const video = document.getElementById('popup-video');
+    const source = document.getElementById('video-source');
+
+    source.src = videoSrc;
+    video.load();
+    video.play().then(() => {
+      if (video.requestFullscreen) video.requestFullscreen();
+      else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+      else if (video.msRequestFullscreen) video.msRequestFullscreen();
     });
+
+    videoPopup.style.display = 'flex';
+    toggleCloseBtn(true);
   });
+});
+
 }
 
 function toggleCloseBtn(show) {
