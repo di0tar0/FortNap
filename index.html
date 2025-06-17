@@ -31,11 +31,11 @@
         </p>
       </div>
       <div class="popup-buttons">
-        <button id="authorize-btn" class="popup-btn">
-          <img src="img/partie.svg" alt="C'est parti !" />
-        </button>
         <button id="deny-btn" class="popup-btn">
           <img src="img/ira.svg" alt="Ça ira..." />
+        </button>
+        <button id="authorize-btn" class="popup-btn">
+          <img src="img/partie.svg" alt="C'est parti !" />
         </button>
       </div>
       <a href="#" class="popup-legal">voir les mentions légales</a>
@@ -49,8 +49,8 @@
 <div id="info-popup">
 </div>
 
-  <div id="progress-container">
-  Prochain point d’intérêt : <strong>Couloir de la mort</strong>
+<div id="progress-container">
+  <p style="margin: 0; ">Barre de progression</p> 
   <div id="progress-bar"></div>
 </div>
 
@@ -406,9 +406,9 @@ function generateInfoCards() {
 
 function toggleCloseBtn(show) {
   const closeBtn = document.getElementById('close-btn');
-  console.log(show)
-  if (show) closeBtn.classList.add('show');
-  else closeBtn.classList.remove('show');
+  console.log(show);
+  if (show === true) closeBtn.classList.add('show1');
+  if (show === false) closeBtn.classList.remove("show1");
 }
 
 function closeAllPopups() {
@@ -500,14 +500,12 @@ function showCarousel() {
   const image = document.getElementById('carousel-image');
   popup.style.display = 'flex';
   image.src = carouselImages[currentSlide];
-  console.log('open')
   document.getElementById('popup-overlay').style.display = 'block'; 
 }
 
 function hideCarousel() {
   document.getElementById('carousel-popup').style.display = 'none';
   toggleCloseBtn(false);
-  console.log('close')
   document.getElementById('popup-overlay').style.display = 'none';
 }
 
@@ -546,17 +544,19 @@ function changeSlide(delta) {
 <div id="carousel-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 10003; justify-content: center; align-items: end;">
   <div id="carousel-container" style="width: 100vw;height: 100vh;overflow: auto;display: flex;justify-content: center;align-items: center;">
     <img id="carousel-image" src="" alt="Image"style="max-width: 100%;max-height: 100%;height: auto;width: auto;object-fit: contain;display: block;">
-    <button id="prev-btn" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;">
+    <button id="prev-btn" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer; filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
+">
     <img src="img/carousel/gauche.svg" alt="Précédent" style="width: 48px; height: 48px;">
     </button>
-    <button id="next-btn" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;">
+    <button id="next-btn" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
+ ">
     <img src="img/carousel/droite.svg" alt="Précédent" style="width: 48px; height: 48px;">
     </button>
   </div>
 </div>
 
-<div id="image-popup" style="display: none; position: fixed; inset: 0; z-index: 10003; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; text-align: center;">
-  <img id="popup-image" src="" alt="Lettre" style="width: 100vw; height: 100vh;object-fit: contain; display: block; margin: auto;" />
+<div id="image-popup" style="display: none; position: fixed; inset: 0; z-index: 10003; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; text-align: center; padding-top: 30%;">
+  <img id="popup-image" src="" alt="Lettre" style="width: 100vw; object-fit: contain; display: block; margin: auto; aspect-ratio: 376 / 2832;"/>
 </div>
 </body>
 
