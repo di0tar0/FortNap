@@ -24,11 +24,12 @@
   <div id="authorization-popup">
     <div class="popup-wrapper">
       <div class="popup-text">
-        <h2>Autorisation Requis</h2>
-        <p>
-          Pour le <span class="highlight">bon fonctionnement</span> de <span class="highlight">l'appli</span>, acceptez vous d'activer le <span class="highlight">mode plein écran</span>
-           et les <span class="highlight">services de géolocalisation</span>.
+        <h2>Autorisation Requise</h2>
+        <p id="popup-message">
+          Pour le <span class="highlight">bon fonctionnement</span> de <span class="highlight">l'appli</span>, acceptez-vous d'activer le <span class="highlight">mode plein écran</span>
+          et les <span class="highlight">services de géolocalisation</span>.
         </p>
+        <p id="popup-error" style="display: none; color: red; font-weight: bold;"></p>
       </div>
       <div class="popup-buttons">
         <button id="deny-btn" class="popup-btn">
@@ -38,7 +39,7 @@
           <img src="img/partie.svg" alt="C'est parti !" />
         </button>
       </div>
-      <a href="#" class="popup-legal">voir les mentions légales</a>
+      <a href="#" class="popup-legal" onclick="showLegalPopup()">voir les mentions légales</a>
     </div>
   </div>
 
@@ -55,493 +56,8 @@
 </div>
 
   <div id="map"></div>
-
-<script>
-const userImage = 'img/CURSOR.png';
-let map, userMarker, userCircle;
-let userPos = [43.0939, 5.89405];
-let markers = [];
-const totalMarkers = 6;
-const closeBtn = document.getElementById('close-btn');
-
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('map').style.display = 'block';
-    document.getElementById('authorization-popup').style.display = 'flex';
-    document.getElementById('popup-overlay').style.display = 'block';
-    updateProgressBar();
-    initMap().then(loadMarkers);
-  }, 2500);
-
-  const videoPopup = document.getElementById('video-popup');
-  const video = document.getElementById('popup-video');
-
-  if (videoPopup && video) {
-    videoPopup.addEventListener('click', (e) => {
-      if (!video.contains(e.target)) {
-        video.pause();
-        video.currentTime = 0;
-        videoPopup.style.display = 'none';
-      }
-    });
-  }
-
-  const nextBtn = document.getElementById('next-btn');
-  const prevBtn = document.getElementById('prev-btn');
-  const carouselPopup = document.getElementById('carousel-popup');
-  const carouselImage = document.getElementById('carousel-image');
-
-  if (nextBtn && prevBtn && carouselPopup && carouselImage) {
-nextBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  changeSlide(1);
-});
-
-prevBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  changeSlide(-1);
-});
-
-  }
-});
-
-document.getElementById('authorize-btn').addEventListener('click', () => {
-  document.getElementById('authorization-popup').style.display = 'none';
-  document.getElementById('popup-overlay').style.display = 'none';
-  requestFullScreen();
-  navigator.permissions.query({ name: 'geolocation' })
-  Notification.permission = "granted";
-});
-
-function requestFullScreen() {
-  const elem = document.documentElement;
-  if (elem.requestFullscreen) elem.requestFullscreen();
-  else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-  else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-}
-
-function initMap() {
-  return new Promise(resolve => {
-    const crs = new L.Proj.CRS('EPSG:2154',
-      '+proj=lcc +lat_0=46.5 +lon_0=3 +lat_1=49 +lat_2=44 +x_0=700000 +y_0=6600000 +ellps=GRS80 +units=m +no_defs',
-      {
-        resolutions: [0.79787616, 0.39893808, 0.19946904, 0.09973452, 0.04986726],
-        origin: [0, 12000000]
-      }
-    );
-
-    map = L.map('map', {
-      crs: crs,
-      zoomControl: true,
-      markerZoomAnimation: false,
-      attributionControl: false,
-      zoomSnap: 0.5,
-      zoomDelta: 0.5,
-      center: userPos,
-      minZoom: 2,
-      maxZoom: 4,
-      maxBoundsViscosity: 1.0
-    });
-
-    L.tileLayer('img/tiles/{z}/{x}/{y}.png', {
-      tileSize: 256,
-      noWrap: true,
-    }).addTo(map);
-
-    map.setView(userPos, 2.5);
-    map.setMaxBounds([
-      [43.09339968728266, 5.892423324595689],
-      [43.09495145111664, 5.894385603258316]
-    ]);
-
-    const userIcon = L.icon({
-      iconUrl: userImage,
-      iconSize: [64, 64],
-      iconAnchor: [56, 62]
-    });
-
-    userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
-    userCircle = L.circle(userPos, {
-      radius: 100000,
-      color: 'rgb(249, 178, 46)',
-      fillColor: 'rgb(249, 178, 46, 0.5)',
-      fillOpacity: 0.2,
-      weight: 1
-    }).addTo(map);
-
-    resolve();
-  });
-}
-
-async function loadMarkers() {
-  const res = await fetch('marker.json');
-  const data = await res.json();
-  const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
-
-  data.forEach(marker => {
-    const iconUrl = seen.includes(marker.id)
-      ? `img/icon2/POI1-${marker.id - 1}.png`
-      : `img/icon1/POI1-${marker.id - 1}.png`;
-
-    const icon = L.icon({
-      iconUrl: iconUrl,
-      iconSize: [48, 48],
-      iconAnchor: [24, 48],
-      popupAnchor: [0, -48]
-    });
-
-    const m = L.marker(marker.coords, { icon }).addTo(map);
-    m.customId = marker.id;
-    m.markerData = marker;
-    markers.push(m);
-  });
-
-  initMovement();
-
-  generateInfoCards();
-}
-
-function initMovement() {
-  const notifiedMarkers = new Set();
-
-  if (!navigator.geolocation) {
-    alert("La géolocalisation n'est pas supportée par votre navigateur.");
-    return;
-  }
-
-  navigator.geolocation.watchPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      userPos = [lat, lng];
-
-      userMarker.setLatLng(userPos);
-      userCircle.setLatLng(userPos);
-      map.setView(userPos, map.getZoom(), { animate: false });
-
-      markers.forEach((marker) => {
-        const distance = map.distance(userCircle.getLatLng(), marker.getLatLng());
-        const markerId = marker.customId;
-
-        if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
-          const newIcon = L.icon({
-            iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
-            iconSize: [48, 48],
-            iconAnchor: [24, 48],
-            popupAnchor: [0, -48],
-          });
-          marker.setIcon(newIcon);
-          notifiedMarkers.add(markerId);
-          notifyAndTrack(markerId);
-
-          if (!marker._hasClickHandler) {
-            marker.on('click', () => {
-              showMarkerPopup(marker.markerData);
-            });
-            marker._hasClickHandler = true;
-          }
-        }
-      });
-    },
-    (error) => {
-      if (error.code === 1) alert("Veuillez Autoriser la géolocalisation dans votre navigateur.");
-      else if (error.code === 2) alert("Position non disponible.");
-      else if (error.code === 3) alert("La recherche de position a expiré. Essayez dans un endroit dégagé.");
-      console.error("Erreur de géolocalisation :", error);
-    }
-    ,
-    {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 5000,
-    }
-  );
-}
-
-function updateProgressBar() {
-  const seenMarkers = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
-  const count = Math.min(seenMarkers.length, totalMarkers);
-  document.getElementById('progress-bar').style.backgroundImage = `url('img/bar/bar${count}.svg')`;
-}
-
-function notifyAndTrack(markerId) {
-  const seenMarkers = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
-  if (!seenMarkers.includes(markerId)) {
-    seenMarkers.push(markerId);
-    localStorage.setItem('seenMarkers', JSON.stringify(seenMarkers));
-    updateProgressBar();
-    generateInfoCards();
-  }
-}
-
-function showMarkerPopup(marker) {
-  const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
-  const hasBeenSeen = seen.includes(marker.id);
-
-  const popup = document.getElementById('marker-popup');
-  const title = document.getElementById('marker-title');
-  const desc = document.getElementById('marker-description');
-  const play = document.getElementById('marker-play');
-  const popupInner = document.getElementById('popup-inner');
-  window.currentMarkerId = marker.id;
-
-  popupInner.style.backgroundImage = `url("img/${hasBeenSeen ? "Frame" : "Frame2"}.svg")`;
-  play.src = `img/${hasBeenSeen ? 'Play2' : 'Play1'}.svg`;
-
-  title.textContent = marker.title;
-  desc.textContent = marker.description;
-
-  popup.style.display = 'flex';
-
-  play.onclick = () => {
-  if (marker.id === 2) {
-    window.location.href = 'POI/360poi.html';
-    return;
-  }
-
-   if (marker.id === 4) {
-    showCarousel();
-    toggleCloseBtn(true);
-    return;
-  }
-
-if (marker.id === 5) {
-    toggleCloseBtn(true);
-  const imagePopup = document.getElementById('image-popup');
-  const image = document.getElementById('popup-image');
-
-  image.src = 'img/vauban/vauban.png'; 
-  imagePopup.style.display = 'block';
-  document.getElementById('popup-overlay').style.display = 'block';
-  return;
-}
-
-    const videoPopup = document.getElementById('video-popup');
-    const video = document.getElementById('popup-video');
-    const videoSource = document.getElementById('video-source');
-
-    const videoSrc = `videos/video${marker.id}.mp4`;
-    videoSource.src = videoSrc;
-    video.load();
-    video.play().then(() => {
-    toggleCloseBtn(true);
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if (video.webkitRequestFullscreen) {
-      video.webkitRequestFullscreen();
-    } else if (video.msRequestFullscreen) {
-      video.msRequestFullscreen();
-    }})
-
-    videoPopup.style.display = 'flex';
-  };
-
-  function onClickOutside(e) {
-    if (!popupInner.contains(e.target)) {
-      closeAllPopups();
-      document.removeEventListener('click', onClickOutside);
-    }
-  }
-
-  setTimeout(() => {
-    document.addEventListener('click', onClickOutside);
-  }, 0);
-}
-
-function generateInfoCards() {
-  const container = document.getElementById('info-popup');
-  container.innerHTML = '';
-
-  const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
-
-  markers.forEach(marker => {
-    const hasBeenSeen = seen.includes(marker.customId);
-
-    const card = document.createElement('div');
-    card.className = 'info-card';
-
-    let playBtnHTML = '';
-    if (hasBeenSeen) {
-      playBtnHTML = `<button class="play-btn" data-id="${marker.customId}" style="background: none;
-    border: none;">
-        <img src="img/Play3.svg" alt="Play">
-      </button>`;
-    }
-
-    card.innerHTML = `
-      <div class="text">
-        <h3>${marker.markerData.title}</h3>
-        <p>${marker.markerData.description}</p>
-      </div>
-      ${playBtnHTML}
-    `;
-
-    container.appendChild(card);
-  });
-
-  const playButtons = document.querySelectorAll('.play-btn');
-playButtons.forEach(button => {
-  button.addEventListener('click', (e) => {
-    e.stopPropagation(); 
-    const id = parseInt(button.dataset.id);
-
-    if (id === 2) {
-      window.location.href = 'POI/360poi.html';
-      return;
-    }
-
-    if (id === 4) {
-      showCarousel();
-      toggleCloseBtn(true);
-      return;
-    }
-
-    if (id === 5) {
-    toggleCloseBtn(true);
-  const imagePopup = document.getElementById('image-popup');
-  const image = document.getElementById('popup-image');
-
-  image.src = 'img/vauban/vauban.png'; 
-  imagePopup.style.display = 'block';
-  document.getElementById('popup-overlay').style.display = 'block';
-  return;
-    }
-
-    const videoSrc = `videos/video${id}.mp4`;
-    const videoPopup = document.getElementById('video-popup');
-    const video = document.getElementById('popup-video');
-    const source = document.getElementById('video-source');
-
-    source.src = videoSrc;
-    video.load();
-    video.play().then(() => {
-      if (video.requestFullscreen) video.requestFullscreen();
-      else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-      else if (video.msRequestFullscreen) video.msRequestFullscreen();
-    });
-
-    videoPopup.style.display = 'flex';
-    toggleCloseBtn(true);
-  });
-});
-
-}
-
-function toggleCloseBtn(show) {
-  const closeBtn = document.getElementById('close-btn');
-  console.log(show);
-  if (show === true) closeBtn.classList.add('show');
-  if (show === false) closeBtn.classList.remove("show");
-}
-
-function closeAllPopups() {
-  const markerPopup = document.getElementById('marker-popup');
-  if (markerPopup) markerPopup.style.display = 'none';
-
-  const infoPopup = document.getElementById('info-popup');
-  if (infoPopup) infoPopup.classList.remove('show');
-
-  const authorizationPopup = document.getElementById('authorization-popup');
-  if (authorizationPopup) authorizationPopup.style.display = 'none';
-
-  const overlay = document.getElementById('popup-overlay');
-  if (overlay) overlay.style.display = 'none';
-
-  toggleCloseBtn(false);
-
-  const videoPopup = document.getElementById('video-popup');
-  const video = document.getElementById('popup-video');
-  if (video) {
-    video.pause();
-    video.currentTime = 0;
-  }
-  if (videoPopup) videoPopup.style.display = 'none';
-
-  const carouselPopup = document.getElementById('carousel-popup');
-  if (carouselPopup) carouselPopup.style.display = 'none';
-
-  const vaubanPopup = document.getElementById('image-popup');
-if (vaubanPopup) vaubanPopup.style.display = 'none';
-}
-
-document.getElementById('close-btn').addEventListener('click', closeAllPopups);
-
-window.addEventListener('click', (e) => {
-  const overlay = document.getElementById('popup-overlay');
-  if (e.target === overlay) {
-    closeAllPopups();
-  }
-});
-
-function resetSeenMarkers() {
-  localStorage.removeItem('seenMarkers');
-  location.reload(); 
-}
-
-const infoBtn = document.getElementById('info-btn');
-const infoPopup = document.getElementById('info-popup');
-
-infoBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  infoPopup.classList.toggle('show');
-  toggleCloseBtn(true);
-  document.getElementById('popup-overlay').style.display = 'block';
-});
-
-window.addEventListener('click', (e) => {
-  const overlay = document.getElementById('popup-overlay');
-  const imagePopup = document.getElementById('image-popup');
-  const carouselPopup = document.getElementById('carousel-popup');
-
-  const isImagePopupVisible = imagePopup && imagePopup.style.display === 'flex';
-  const isCarouselVisible = carouselPopup && carouselPopup.style.display === 'flex';
-
-  if (isImagePopupVisible || isCarouselVisible) {
-    return;
-  }
-
-  if (e.target === overlay) {
-    closeAllPopups();
-  }
-});
-
-const carouselImages = [
-  'img/carousel/carousel1.jpg',
-  'img/carousel/carousel2.jpg',
-  'img/carousel/carousel3.jpg',
-  'img/carousel/carousel4.jpg',
-  'img/carousel/carousel5.jpg',
-  'img/carousel/carousel6.jpg',
-  'img/carousel/carousel7.jpg',
-  'img/carousel/carousel8.jpg'
-];
-
-let currentSlide = 0;
-
-function showCarousel() {
-  const popup = document.getElementById('carousel-popup');
-  const image = document.getElementById('carousel-image');
-  popup.style.display = 'flex';
-  image.src = carouselImages[currentSlide];
-  document.getElementById('popup-overlay').style.display = 'block'; 
-}
-
-function hideCarousel() {
-  document.getElementById('carousel-popup').style.display = 'none';
-  toggleCloseBtn(false);
-  document.getElementById('popup-overlay').style.display = 'none';
-}
-
-function changeSlide(delta) {
-  currentSlide = (currentSlide + delta + carouselImages.length) % carouselImages.length;
-  document.getElementById('carousel-image').src = carouselImages[currentSlide];
-}
-
-</script>
-
-
-<div id="marker-popup" style="display: none; position: fixed; inset: 0; z-index: 10001; justify-content: center; align-items: center; padding: 20px; background-color: rgba(0, 0, 0, 0.5); font-family: 'Poppins', sans-serif;">
+  
+<div id="marker-popup" style="display: none; position: fixed; inset: 0; z-index: 10001; justify-content: center; align-items: center; padding: 20px; background-color: rgba(0, 0, 0, 0.1); font-family: 'Poppins', sans-serif;">
   <div id="popup-inner" style="width: 100%; max-width: 400px; background-image: url('img/Frame.svg'); background-size: cover; background-position: center; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap:20px;">
 
     <div class="popup-text" style="text-align: center; display: flex; flex-direction: column; gap: 30px;">
@@ -559,7 +75,7 @@ function changeSlide(delta) {
 </div>
 
 <div id="video-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 10002; justify-content: center; align-items: center;">
-  <video id="popup-video" controls style="width: 90%; max-width: 800px; border-radius: 10px;">
+  <video id="popup-video" controls style="width: 90%; max-width: 330px; border-radius: 10px; filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.2));">
     <source id="video-source" src="" type="video/mp4">
     Votre navigateur ne supporte pas la lecture de vidéo.
   </video>
@@ -568,11 +84,11 @@ function changeSlide(delta) {
 <div id="carousel-popup" style="display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 10003; justify-content: center; align-items: end;">
   <div id="carousel-container" style="width: 100vw;height: 100vh;overflow: auto;display: flex;justify-content: center;align-items: flex-end;">
     <img id="carousel-image" src="" alt="Image"style="max-width: 100%;height: 88%;object-fit: contain;display: block;">
-    <button id="prev-btn" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer; filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
+    <button id="prev-btn" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer; filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.2));
 ">
     <img src="img/carousel/gauche.svg" alt="Précédent" style="width: 48px; height: 48px;">
     </button>
-    <button id="next-btn" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
+    <button id="next-btn" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 2rem; color: white; cursor: pointer;filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.2)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.2));
  ">
     <img src="img/carousel/droite.svg" alt="Précédent" style="width: 48px; height: 48px;">
     </button>
@@ -582,6 +98,56 @@ function changeSlide(delta) {
 <div id="image-popup" style="display: none; position: fixed; inset: 0; z-index: 10003; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto; text-align: center; padding-top: 30%;">
   <img id="popup-image" src="" alt="Lettre" style="width: 100vw; object-fit: contain; display: block; margin: auto; aspect-ratio: 376 / 2832;"/>
 </div>
+
+<div id="legal-popup" style="display: none; position: fixed; inset: 0; z-index: 10004; overflow-y: auto;">
+
+  <div style="max-width: 600px; background: transparent; color: #222; padding: 10px 20px; border-radius: 10px; font-family: 'Poppins', sans-serif; position: relative; background-image: url('img/textured-paper.png');">
+
+    <h2 style="text-align: center; color: #2b5e2e; font-family: 'Chunky Felt', cursive;">Mentions légales de l’application<br>« Napoléon Raconte »</h2>
+
+    <p style="margin-top: 20px;"><strong style="color: #2b5e2e;">Cette application est éditée par :</strong></p>
+    <p>
+      Université de Toulon<br>
+      Adresse : Université de Toulon, 70 avenue Roger Devoucoux, 83000 Toulon<br>
+      <strong>Email</strong> : contact@departement.univ-tln.fr
+    </p>
+
+    <p><strong style="color: #2b5e2e;">Hébergement</strong></p>
+    <p>
+      L’application est hébergée par :<br>
+      [Nom de l’hébergeur]<br>
+      Adresse : [Adresse de l’hébergeur]<br>
+      Téléphone : [Numéro]<br>
+      Site web : [URL]
+    </p>
+
+    <p><strong style="color: #2b5e2e;">Propriété intellectuelle</strong></p>
+    <p>
+      Tous les contenus présents dans l’application (textes, images, vidéos, cartes interactives, animations, mascottes, éléments sonores, etc.)
+      sont protégés par le droit d’auteur. Ils sont la propriété exclusive de l’Université de Toulon ou de ses partenaires.
+      Toute reproduction ou réutilisation, même partielle, sans autorisation préalable est strictement interdite.
+    </p>
+
+    <p><strong style="color: #2b5e2e;">Données personnelles</strong></p>
+    <p>
+      L’application respecte les dispositions du Règlement Général sur la Protection des Données (RGPD).
+      Aucune donnée personnelle n’est collectée sans le consentement de l’utilisateur.
+    </p>
+
+    <p><strong style="color: #2b5e2e;">Responsabilités</strong></p>
+    <p>
+      L’application est fournie à titre informatif et pédagogique. L’Université de Toulon ne saurait être tenue responsable
+      de l’inexactitude ou de l’obsolescence des informations, ni des éventuelles interruptions de service.
+    </p>
+
+    <button onclick="closeLegalPopup()" style=" bottom: 15px; left: 15px; background: none; border: 2px solid #2b5e2e; color: #2b5e2e; font-weight: bold; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Fermer</button>
+  </div>
+</div>
+
+
+
+<script src="index.js"></script>
+
 </body>
 
 </html>
