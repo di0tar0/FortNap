@@ -5,6 +5,8 @@ let markers = [];
 const totalMarkers = 6;
 const closeBtn = document.getElementById('close-btn');
 
+  const notifiedMarkers = new Set();
+
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
@@ -104,7 +106,7 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 100000,
+      radius: 10,
       color: 'rgb(249, 178, 46)',
       fillColor: 'rgb(249, 178, 46, 0.5)',
       fillOpacity: 0.2,
@@ -144,14 +146,13 @@ async function loadMarkers() {
 }
 
 function initMovement() {
-  const notifiedMarkers = new Set();
 
   if (!navigator.geolocation) {
     alert("La géolocalisation n'est pas supportée par votre navigateur.");
     return;
   }
 
-  navigator.geolocation.watchPosition(
+  geoWatchId = navigator.geolocation.watchPosition(
     (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
@@ -161,29 +162,8 @@ function initMovement() {
       userCircle.setLatLng(userPos);
       map.setView(userPos, map.getZoom(), { animate: false });
 
-      markers.forEach((marker) => {
-        const distance = map.distance(userCircle.getLatLng(), marker.getLatLng());
-        const markerId = marker.customId;
+    setInterval(checkProximityToMarkers, 50);
 
-        if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
-          const newIcon = L.icon({
-            iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
-            iconSize: [48, 48],
-            iconAnchor: [24, 48],
-            popupAnchor: [0, -48],
-          });
-          marker.setIcon(newIcon);
-          notifiedMarkers.add(markerId);
-          notifyAndTrack(markerId);
-
-          if (!marker._hasClickHandler) {
-            marker.on('click', () => {
-              showMarkerPopup(marker.markerData);
-            });
-            marker._hasClickHandler = true;
-          }
-        }
-      });
     },
     (error) => {
       if (error.code === 1) alert("Veuillez Autoriser la géolocalisation dans votre navigateur.");
@@ -214,6 +194,16 @@ function notifyAndTrack(markerId) {
     updateProgressBar();
     generateInfoCards();
   }
+  const marker = markers.find(m => m.customId === markerId);
+  if (marker) {
+    const newIcon = L.icon({
+      iconUrl: `img/icon2/POI1-${markerId - 1}.png`,
+      iconSize: [48, 48],
+      iconAnchor: [24, 48],
+      popupAnchor: [0, -48],
+    });
+    marker.setIcon(newIcon);
+  }
 }
 
 function showMarkerPopup(marker) {
@@ -236,6 +226,7 @@ function showMarkerPopup(marker) {
   popup.style.display = 'flex';
 
   play.onclick = () => {
+  notifyAndTrack(marker.id);
   if (marker.id === 2) {
     window.location.href = 'POI/360poi.html';
     return;
@@ -389,7 +380,6 @@ playButtons.forEach(button => {
 
 function toggleCloseBtn(show) {
   const closeBtn = document.getElementById('close-btn');
-  console.log(show);
   if (show === true) closeBtn.classList.add('show');
   if (show === false) closeBtn.classList.remove("show");
 }
@@ -498,3 +488,82 @@ document.getElementById('deny-btn').addEventListener('click', () => {
 vous devez activer la géolocalisation et le plein écran. Cela est nécessaire pour une expérience optimale
 et le bon fonctionnement de l'appli.`;
 });
+
+document.getElementById('zqsd-btn').addEventListener('click', () => {
+  const startPosZQSD = [43.09375, 5.89375];
+  userPos = startPosZQSD;
+
+  if (userMarker) userMarker.setLatLng(userPos);
+  if (userCircle) userCircle.setLatLng(userPos);
+  map.setView(userPos, map.getZoom());
+
+if (geoWatchId !== null) {
+  navigator.geolocation.clearWatch(geoWatchId);
+  geoWatchId = null;
+}
+
+  document.getElementById('authorization-popup').style.display = 'none';
+  document.getElementById('popup-overlay').style.display = 'none';
+
+  toggleCloseBtn(false);
+
+  enableZQSDMovement();
+});
+
+
+function enableZQSDMovement() {
+  const moveSpeed = 0.000005; 
+  const keys = { z: false, q: false, s: false, d: false };
+
+  function move() {
+    let [lat, lng] = userPos;
+
+    if (keys.z) lat += moveSpeed;
+    if (keys.s) lat -= moveSpeed;
+    if (keys.q) lng -= moveSpeed;
+    if (keys.d) lng += moveSpeed;
+
+    userPos = [lat, lng];
+
+    userMarker.setLatLng(userPos);
+    userCircle.setLatLng(userPos);
+    map.setView(userPos, map.getZoom(), { animate: false });
+
+    requestAnimationFrame(move);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) keys[key] = true;
+  });
+
+  document.addEventListener('keyup', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) keys[key] = false;
+  });
+
+  move();
+  setInterval(checkProximityToMarkers, 50);
+}
+
+function checkProximityToMarkers() {
+  markers.forEach((marker) => {
+    const distance = map.distance(userCircle.getLatLng(), marker.getLatLng());
+    const markerId = marker.customId;
+
+    if (distance <= userCircle.getRadius() && !notifiedMarkers.has(markerId)) {
+      notifiedMarkers.add(markerId);
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(`${marker.markerData.title}`, {
+          body: marker.markerData.description
+        });
+      }
+
+      if (!marker._hasClickHandler) {
+        marker.on('click', () => showMarkerPopup(marker.markerData));
+        marker._hasClickHandler = true;
+      }
+    }
+  });
+}
