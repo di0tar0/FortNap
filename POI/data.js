@@ -154,33 +154,33 @@ var APP_DATA = {
       },
       "linkHotspots": [
         {
-          "yaw": 3.1381337023124374,
-          "pitch": -0.002468194954113656,
+          "yaw": 0.5381337023124374,
+          "pitch": 0.059468194954113656,
           "rotation": 0,
           "target": "1-place-du-fort"
         },
         {
-          "yaw": -0.030092033683015273,
-          "pitch": -0.00376546408068279,
+          "yaw": 3.630092033683015273,
+          "pitch": 0.00000000000,
           "rotation": 0,
           "target": "4-piece"
         },
         {
-          "yaw": 0.7374656270924937,
-          "pitch": 0.07788909711534941,
-          "rotation": 7.0685834705770345,
+          "yaw": 4.6074656270924937,
+          "pitch": -0.0425979801651846,
+          "rotation": -5.8685834705770345,
           "target": "6-petite-piece-droite"
         },
         {
-          "yaw": -0.9556630872101497,
-          "pitch": 0.0725979801651846,
+          "yaw": -3.6556630872101497,
+          "pitch": -0.0425979801651846,
           "rotation": 5.497787143782138,
           "target": "5-petite-piece-gauche"
         }
       ],
       "infoHotspots": [
         {
-          "yaw": -0.37,
+          "yaw": -3.00,
           "pitch": -0.32,
           "title": "Galerie de communication",
           "text": "Cette galerie permettait aux soldats de se déplacer à l’abri à travers le fort. Elle reliait les différents espaces stratégiques, comme les casemates, les alcôves et la cour intérieure. Sa forme étroite et voûtée assurait une protection contre les tirs et les éclats d’obus. Elle constituait aussi un excellent moyen de circulation rapide en cas d’attaque."
@@ -274,21 +274,21 @@ var APP_DATA = {
       },
       "linkHotspots": [
         {
-          "yaw": 1.543311745599623,
-          "pitch": 0.004749579698051676,
+          "yaw": -1.063311745599623,
+          "pitch": 0.000749579698051676,
           "rotation": 0,
           "target": "2-couloir-entr-1"
         }
       ],
       "infoHotspots": [
         {
-          "yaw": 0.28,
+          "yaw": 3.98,
           "pitch": -0.17,
           "title": "Meurtrière de tir",
           "text": "Cette meurtrière permettait aux soldats de tirer tout en restant à l'abri. Elle était orientée vers l’extérieur pour couvrir les approches du fort."
         },
         {
-          "yaw": 2.65,
+          "yaw": 0.00,
           "pitch": -0.17,
           "title": "Espace de veille en alerte",
           "text": "Lors des périodes de tension ou d'alerte, des soldats restaient en poste ici, prêts à intervenir rapidement en cas d’attaque."
@@ -386,22 +386,22 @@ var APP_DATA = {
       },
       "linkHotspots": [
         {
-          "yaw": -1.956643116310989,
-          "pitch": 0.03039863123362707,
+          "yaw": 3.656643116310989,
+          "pitch": -0.03039863123362707,
           "rotation": 5.497787143782138,
           "target": "2-couloir-entr-1"
         },
         {
-          "yaw": 2.4961618252309847,
-          "pitch": -0.007763093834668666,
-          "rotation": 0.7853981633974483,
+          "yaw": -0.8961618252309847,
+          "pitch": -0.107763093834668666,
+          "rotation": -5.853981633974483,
           "target": "2-couloir-entr-1"
         }
       ],
       "infoHotspots": [
         {
-          "yaw": -1.1,
-          "pitch": -0.15,
+          "yaw": -1.9,
+          "pitch": -0.45,
           "title": "Stockage de munitions",
           "text": "Cette alcôve servait d’espace de stockage pour les munitions et le matériel nécessaire à la défense du fort. Sa position protégée permettait de limiter les risques en cas d’explosion ou d’incendie dans les zones voisines."
         }

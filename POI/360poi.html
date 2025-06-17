@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Vue 360° de L'intérieur du Fort</title>
+<title>Project Title</title>
 <meta charset="utf-8">
 <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
-<link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 <style> @-ms-viewport { width: device-width; } </style>
 <link rel="stylesheet" href="vendor/reset.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="multiple-scenes ">
+<body class="multiple-scenes view-control-buttons">
+
+  <div id="tutorialBackdrop"></div>
+
+  <div id="tutorialOverlay">
+    <!-- ÉTAPE 1 : Bienvenue -->
+    <div class="tutorialSlide active" id="slide-1">
+      <h2>Bienvenue à l'interieur !</h2>
+      <p>Explorez librement les espaces du Fort Napoléon grâce à cette visite en 360°.</p>
+      <button id="btn-step-1" class="custom-button">Suivant</button>
+    </div>
+  
+    <!-- ÉTAPE 2 : Bouger la vue -->
+    <div class="tutorialSlide" id="slide-2">
+      <h2>Regardez autour de vous</h2>
+      <p>Faites glisser l’écran avec votre doigt pour explorer l’environnement en 360°.</p>
+    </div>
+  
+    <!-- ÉTAPE 3 : Changer de panorama -->
+    <div class="tutorialSlide" id="slide-3">
+      <h2>Changer de zone</h2>
+      <p>Appuyez sur les flèches à l’écran pour vous déplacer vers d’autres espaces du fort.</p>
+    </div>
+  
+    <!-- ÉTAPE 4 : Hotspots -->
+    <div class="tutorialSlide" id="slide-4">
+      <h2>Points d’intérêt</h2>
+      <p>Touchez les icônes “i” pour découvrir anecdotes, faits historiques et détails d’architecture.</p>
+    </div>
+  
+    <!-- ÉTAPE 5 : Fin -->
+    <div class="tutorialSlide" id="slide-5">
+      <h2>Bonne visite !</h2>
+      <p>Bonne exploration du Fort Napoléon. Glissez, touchez, apprenez.</p>
+    </div>
+  </div>
+  
+  
 
 <div id="pano"></div>
 
@@ -51,7 +87,7 @@
   </ul>
 
         <div id="quitContainer">
-        <a href="../index.html" id="quitButton">Quitter la vue 360°</a> <!--changer le href pour quitter la page ici -->
+        <a href="index.html" id="quitButton">Quitter la vue 360°</a> <!--changer le href pour quitter la page ici -->
       </div>
 
 </div>

@@ -1,3 +1,10 @@
+
+function endTutorial() {
+  document.getElementById('tutorialBackdrop').style.display = 'none';
+  document.getElementById('sceneListToggle').classList.remove('locked');
+}
+
+
 /*
  * Copyright 2016 Google Inc. All rights reserved.
  *
@@ -142,7 +149,7 @@
 
   // Start with the scene list open on desktop.
   if (!document.body.classList.contains('mobile')) {
-    showSceneList();
+    hideSceneList();
   }
 
   // Set handler for scene switch.
@@ -150,12 +157,22 @@
     var el = document.querySelector('#sceneList .scene[data-id="' + scene.data.id + '"]');
     el.addEventListener('click', function() {
       switchScene(scene);
-      // On mobile, hide scene list after selecting a scene.
       if (document.body.classList.contains('mobile')) {
         hideSceneList();
       }
+  
+      // ✅ Déclencher passage à l’étape 4 si on est à l’étape 3
+      if (tutorialStep === 2 && !hasNavigated) {
+        hasNavigated = true;
+        hideSlide(2);
+        setTimeout(() => {
+          tutorialStep = 3;
+          showSlide(tutorialStep);
+        }, 1000);
+      }
     });
   });
+  
 
   // DOM elements for view controls.
   var viewUpElement = document.querySelector('#viewUp');
@@ -399,5 +416,112 @@
 
   // Display the initial scene.
   switchScene(scenes[0]);
+
+// === Tutoriel interactif Marzipano (avec délai entre slides) ===
+
+const tutorialOverlay = document.getElementById('tutorialOverlay');
+const tutorialBackdrop = document.getElementById('tutorialBackdrop');
+const slides = document.querySelectorAll('.tutorialSlide');
+let tutorialStep = 0;
+let hasMoved = false;
+let hasNavigated = false;
+let hasClickedHotspot = false;
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+  });
+
+  if (index >= slides.length) {
+    tutorialOverlay.style.display = 'none';
+    tutorialBackdrop.style.display = 'none';
+    startAutorotate();
+  } else {
+    tutorialOverlay.style.display = 'block';
+    tutorialBackdrop.style.display = (index === 0) ? 'block' : 'none';
+  }
+}
+
+function hideSlide(index) {
+  slides[index]?.classList.remove('active');
+}
+
+document.getElementById('btn-step-1').addEventListener('click', () => {
+  document.getElementById('sceneListToggle').classList.add('locked');
+  stopAutorotate();
+  hideSlide(0);
+  tutorialBackdrop.style.display = 'none';
+
+  setTimeout(() => {
+    tutorialStep = 1;
+    showSlide(tutorialStep);
+  }, 1000);
+});
+
+
+viewer.view().addEventListener('change', () => {
+  if (tutorialStep === 1 && !hasMoved) {
+    hasMoved = true;
+    hideSlide(1);
+    setTimeout(() => {
+      tutorialStep = 2;
+      showSlide(tutorialStep);
+    }, 1000);
+  }
+});
+
+const navButtons = document.querySelectorAll('.viewControlButton');
+navButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    if (tutorialStep === 2 && !hasNavigated) {
+      hasNavigated = true;
+      hideSlide(2);
+      setTimeout(() => {
+        tutorialStep = 3;
+        showSlide(tutorialStep);
+      }, 1000);
+    }
+  });
+  document.body.addEventListener('click', (e) => {
+    if (tutorialStep === 2 && !hasNavigated && e.target.closest('.link-hotspot')) {
+      hasNavigated = true;
+      hideSlide(2);
+      setTimeout(() => {
+        tutorialStep = 3;
+        showSlide(tutorialStep);
+      }, 1000);
+    }
+  });
+});
+
+
+document.body.addEventListener('click', (e) => {
+  if (tutorialStep === 3 && e.target.closest('.info-hotspot-header')) {
+    hideSlide(3);
+    setTimeout(() => {
+      tutorialStep = 4;
+      showSlide(tutorialStep);
+
+      // Étape 5 s’affiche 3 secondes, puis tuto terminé
+      setTimeout(() => {
+        tutorialStep = 5;
+        showSlide(tutorialStep);
+
+        setTimeout(() => {
+          endTutorial(); // <-- Déverrouille le bouton et masque le backdrop
+          startAutorotate();
+        }, 1000);
+      }, 1000);
+    }, 1000);
+  }
+});
+
+
+// Initialisation
+stopAutorotate();
+showSlide(0);
+
+
+
 
 })();
