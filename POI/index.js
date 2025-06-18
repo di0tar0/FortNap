@@ -22,7 +22,7 @@ function endTutorial() {
  */
 'use strict';
 
-(function() {
+(function () {
   var Marzipano = window.Marzipano;
   var bowser = window.bowser;
   var screenfull = window.screenfull;
@@ -37,7 +37,7 @@ function endTutorial() {
   var fullscreenToggleElement = document.querySelector('#fullscreenToggle');
 
   if (window.matchMedia) {
-    var setMode = function() {
+    var setMode = function () {
       if (mql.matches) {
         document.body.classList.remove('desktop');
         document.body.classList.add('mobile');
@@ -54,7 +54,7 @@ function endTutorial() {
   }
 
   document.body.classList.add('no-touch');
-  window.addEventListener('touchstart', function() {
+  window.addEventListener('touchstart', function () {
     document.body.classList.remove('no-touch');
     document.body.classList.add('touch');
   });
@@ -71,14 +71,14 @@ function endTutorial() {
 
   var viewer = new Marzipano.Viewer(panoElement, viewerOpts);
 
-  var scenes = data.scenes.map(function(data) {
+  var scenes = data.scenes.map(function (data) {
     var urlPrefix = "tiles";
     var source = Marzipano.ImageUrlSource.fromString(
       urlPrefix + "/" + data.id + "/{z}/{f}/{y}/{x}.jpg",
       { cubeMapPreviewUrl: urlPrefix + "/" + data.id + "/preview.jpg" });
     var geometry = new Marzipano.CubeGeometry(data.levels);
 
-    var limiter = Marzipano.RectilinearView.limit.traditional(data.faceSize, 100*Math.PI/180, 120*Math.PI/180);
+    var limiter = Marzipano.RectilinearView.limit.traditional(data.faceSize, 100 * Math.PI / 180, 120 * Math.PI / 180);
     var view = new Marzipano.RectilinearView(data.initialViewParameters, limiter);
 
     var scene = viewer.createScene({
@@ -88,12 +88,12 @@ function endTutorial() {
       pinFirstLevel: true
     });
 
-    data.linkHotspots.forEach(function(hotspot) {
+    data.linkHotspots.forEach(function (hotspot) {
       var element = createLinkHotspotElement(hotspot);
       scene.hotspotContainer().createHotspot(element, { yaw: hotspot.yaw, pitch: hotspot.pitch });
     });
 
-    data.infoHotspots.forEach(function(hotspot) {
+    data.infoHotspots.forEach(function (hotspot) {
       var element = createInfoHotspotElement(hotspot);
       scene.hotspotContainer().createHotspot(element, { yaw: hotspot.yaw, pitch: hotspot.pitch });
     });
@@ -108,7 +108,7 @@ function endTutorial() {
   var autorotate = Marzipano.autorotate({
     yawSpeed: 0.03,
     targetPitch: 0,
-    targetFov: Math.PI/2
+    targetFov: Math.PI / 2
   });
   if (data.settings.autorotateEnabled) {
     autorotateToggleElement.classList.add('enabled');
@@ -118,10 +118,10 @@ function endTutorial() {
 
   if (screenfull.enabled && data.settings.fullscreenButton) {
     document.body.classList.add('fullscreen-enabled');
-    fullscreenToggleElement.addEventListener('click', function() {
+    fullscreenToggleElement.addEventListener('click', function () {
       screenfull.toggle();
     });
-    screenfull.on('change', function() {
+    screenfull.on('change', function () {
       if (screenfull.isFullscreen) {
         fullscreenToggleElement.classList.add('enabled');
       } else {
@@ -138,14 +138,14 @@ function endTutorial() {
     hideSceneList();
   }
 
-  scenes.forEach(function(scene) {
+  scenes.forEach(function (scene) {
     var el = document.querySelector('#sceneList .scene[data-id="' + scene.data.id + '"]');
-    el.addEventListener('click', function() {
+    el.addEventListener('click', function () {
       switchScene(scene);
       if (document.body.classList.contains('mobile')) {
         hideSceneList();
       }
-  
+
       if (tutorialStep === 2 && !hasNavigated) {
         hasNavigated = true;
         hideSlide(2);
@@ -156,7 +156,7 @@ function endTutorial() {
       }
     });
   });
-  
+
 
   var viewUpElement = document.querySelector('#viewUp');
   var viewDownElement = document.querySelector('#viewDown');
@@ -169,12 +169,12 @@ function endTutorial() {
   var friction = 3;
 
   var controls = viewer.controls();
-  controls.registerMethod('upElement',    new Marzipano.ElementPressControlMethod(viewUpElement,     'y', -velocity, friction), true);
-  controls.registerMethod('downElement',  new Marzipano.ElementPressControlMethod(viewDownElement,   'y',  velocity, friction), true);
-  controls.registerMethod('leftElement',  new Marzipano.ElementPressControlMethod(viewLeftElement,   'x', -velocity, friction), true);
-  controls.registerMethod('rightElement', new Marzipano.ElementPressControlMethod(viewRightElement,  'x',  velocity, friction), true);
-  controls.registerMethod('inElement',    new Marzipano.ElementPressControlMethod(viewInElement,  'zoom', -velocity, friction), true);
-  controls.registerMethod('outElement',   new Marzipano.ElementPressControlMethod(viewOutElement, 'zoom',  velocity, friction), true);
+  controls.registerMethod('upElement', new Marzipano.ElementPressControlMethod(viewUpElement, 'y', -velocity, friction), true);
+  controls.registerMethod('downElement', new Marzipano.ElementPressControlMethod(viewDownElement, 'y', velocity, friction), true);
+  controls.registerMethod('leftElement', new Marzipano.ElementPressControlMethod(viewLeftElement, 'x', -velocity, friction), true);
+  controls.registerMethod('rightElement', new Marzipano.ElementPressControlMethod(viewRightElement, 'x', velocity, friction), true);
+  controls.registerMethod('inElement', new Marzipano.ElementPressControlMethod(viewInElement, 'zoom', -velocity, friction), true);
+  controls.registerMethod('outElement', new Marzipano.ElementPressControlMethod(viewOutElement, 'zoom', velocity, friction), true);
 
   function sanitize(s) {
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;');
@@ -253,13 +253,13 @@ function endTutorial() {
     icon.src = 'img/link.png';
     icon.classList.add('link-hotspot-icon');
 
-    var transformProperties = [ '-ms-transform', '-webkit-transform', 'transform' ];
+    var transformProperties = ['-ms-transform', '-webkit-transform', 'transform'];
     for (var i = 0; i < transformProperties.length; i++) {
       var property = transformProperties[i];
       icon.style[property] = 'rotate(' + hotspot.rotation + 'rad)';
     }
 
-    wrapper.addEventListener('click', function() {
+    wrapper.addEventListener('click', function () {
       switchScene(findSceneById(hotspot.target));
     });
 
@@ -322,7 +322,7 @@ function endTutorial() {
     modal.classList.add('info-hotspot-modal');
     document.body.appendChild(modal);
 
-    var toggle = function() {
+    var toggle = function () {
       wrapper.classList.toggle('visible');
       modal.classList.toggle('visible');
     };
@@ -337,10 +337,10 @@ function endTutorial() {
   }
 
   function stopTouchAndScrollEventPropagation(element, eventList) {
-    var eventList = [ 'touchstart', 'touchmove', 'touchend', 'touchcancel',
-                      'wheel', 'mousewheel' ];
+    var eventList = ['touchstart', 'touchmove', 'touchend', 'touchcancel',
+      'wheel', 'mousewheel'];
     for (var i = 0; i < eventList.length; i++) {
-      element.addEventListener(eventList[i], function(event) {
+      element.addEventListener(eventList[i], function (event) {
         event.stopPropagation();
       });
     }
@@ -363,117 +363,117 @@ function endTutorial() {
     }
     return null;
   }
-  
+
   function updateSceneImage(scene) {
-  var sceneImageElement = document.getElementById('sceneImage');
-  if (scene.data.image) {
-    sceneImageElement.src = scene.data.image;
-  } else {
-    sceneImageElement.src = 'img/minimap1.png';
+    var sceneImageElement = document.getElementById('sceneImage');
+    if (scene.data.image) {
+      sceneImageElement.src = scene.data.image;
+    } else {
+      sceneImageElement.src = 'img/minimap1.png';
+    }
   }
-}
 
   switchScene(scenes[0]);
 
-const tutorialOverlay = document.getElementById('tutorialOverlay');
-const tutorialBackdrop = document.getElementById('tutorialBackdrop');
-const slides = document.querySelectorAll('.tutorialSlide');
-let tutorialStep = 0;
-let hasMoved = false;
-let hasNavigated = false;
-let hasClickedHotspot = false;
+  const tutorialOverlay = document.getElementById('tutorialOverlay');
+  const tutorialBackdrop = document.getElementById('tutorialBackdrop');
+  const slides = document.querySelectorAll('.tutorialSlide');
+  let tutorialStep = 0;
+  let hasMoved = false;
+  let hasNavigated = false;
+  let hasClickedHotspot = false;
 
-function showSlide(index) {
-  slides.forEach((slide, i) => {
-    slide.classList.toggle('active', i === index);
-  });
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
 
-  if (index >= slides.length) {
-    tutorialOverlay.style.display = 'none';
-    tutorialBackdrop.style.display = 'none';
-    startAutorotate();
-  } else {
-    tutorialOverlay.style.display = 'block';
-    tutorialBackdrop.style.display = (index === 0) ? 'block' : 'none';
+    if (index >= slides.length) {
+      tutorialOverlay.style.display = 'none';
+      tutorialBackdrop.style.display = 'none';
+      startAutorotate();
+    } else {
+      tutorialOverlay.style.display = 'block';
+      tutorialBackdrop.style.display = (index === 0) ? 'block' : 'none';
+    }
   }
-}
 
-function hideSlide(index) {
-  slides[index]?.classList.remove('active');
-}
+  function hideSlide(index) {
+    slides[index]?.classList.remove('active');
+  }
 
-document.getElementById('btn-step-1').addEventListener('click', () => {
-  stopAutorotate();
-  hideSlide(0);
-  tutorialBackdrop.style.display = 'none';
+  document.getElementById('btn-step-1').addEventListener('click', () => {
+    stopAutorotate();
+    hideSlide(0);
+    tutorialBackdrop.style.display = 'none';
 
-  setTimeout(() => {
-    tutorialStep = 1;
-    showSlide(tutorialStep);
-  }, 1000);
-});
-
-
-viewer.view().addEventListener('change', () => {
-  if (tutorialStep === 1 && !hasMoved) {
-    hasMoved = true;
-    hideSlide(1);
     setTimeout(() => {
-      tutorialStep = 2;
+      tutorialStep = 1;
       showSlide(tutorialStep);
     }, 1000);
-  }
-});
+  });
 
-const navButtons = document.querySelectorAll('.viewControlButton');
-navButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    if (tutorialStep === 2 && !hasNavigated) {
-      hasNavigated = true;
-      hideSlide(2);
+
+  viewer.view().addEventListener('change', () => {
+    if (tutorialStep === 1 && !hasMoved) {
+      hasMoved = true;
+      hideSlide(1);
       setTimeout(() => {
-        tutorialStep = 3;
+        tutorialStep = 2;
         showSlide(tutorialStep);
       }, 1000);
     }
   });
+
+  const navButtons = document.querySelectorAll('.viewControlButton');
+  navButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      if (tutorialStep === 2 && !hasNavigated) {
+        hasNavigated = true;
+        hideSlide(2);
+        setTimeout(() => {
+          tutorialStep = 3;
+          showSlide(tutorialStep);
+        }, 1000);
+      }
+    });
+    document.body.addEventListener('click', (e) => {
+      if (tutorialStep === 2 && !hasNavigated && e.target.closest('.link-hotspot')) {
+        hasNavigated = true;
+        hideSlide(2);
+        setTimeout(() => {
+          tutorialStep = 3;
+          showSlide(tutorialStep);
+        }, 1000);
+      }
+    });
+  });
+
+
   document.body.addEventListener('click', (e) => {
-    if (tutorialStep === 2 && !hasNavigated && e.target.closest('.link-hotspot')) {
-      hasNavigated = true;
-      hideSlide(2);
+    if (tutorialStep === 3 && e.target.closest('.info-hotspot-header')) {
+      hideSlide(3);
       setTimeout(() => {
-        tutorialStep = 3;
-        showSlide(tutorialStep);
-      }, 1000);
-    }
-  });
-});
-
-
-document.body.addEventListener('click', (e) => {
-  if (tutorialStep === 3 && e.target.closest('.info-hotspot-header')) {
-    hideSlide(3);
-    setTimeout(() => {
-      tutorialStep = 4;
-      showSlide(tutorialStep);
-
-      setTimeout(() => {
-        tutorialStep = 5;
+        tutorialStep = 4;
         showSlide(tutorialStep);
 
         setTimeout(() => {
-          endTutorial();
-          startAutorotate();
+          tutorialStep = 5;
+          showSlide(tutorialStep);
+
+          setTimeout(() => {
+            endTutorial();
+            startAutorotate();
+          }, 1000);
         }, 1000);
       }, 1000);
-    }, 1000);
-  }
-});
+    }
+  });
 
 
-// Initialisation
-stopAutorotate();
-showSlide(0);
+  // Initialisation
+  stopAutorotate();
+  showSlide(0);
 
 
 

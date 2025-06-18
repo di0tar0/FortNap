@@ -1,40 +1,56 @@
 [
-    {
-      "id": 1,
-      "title": "PO1 : Les Débuts du Fort",
-      "description": "✉️ Découvrez comment Napoléon a repris Toulon et fortifié la colline du Caire !",
-      "coords": [43.09405, 5.89375]
-    },
-    {
-      "id": 2,
-      "title": "PO2 : Immersion dans le fort",
-      "description": "✨ Plongez dans une visite immersive à 360° des couloirs et casemates !",
-      "coords": [43.094425, 5.894]
-    },
-    {
-      "id": 3,
-      "title": "PO3 : L'architecture du Fort",
-      "description": "🏰 Apprenez pourquoi le fort a la forme d’une étoile et comment il se camoufle dans la colline !",
-      "coords": [43.0945, 5.89345]
-    },
-    {
-      "id": 4,
-      "title": "PO4 : L'attaque dans les tranchées",
-      "description": "💥 Revivez une scène de bataille racontée à travers un livre animé !",
-      "coords": [43.09478, 5.893578]
-    },
-    {
-      "id": 5,
-            "title": "PO5 : Les moyens de communications",
-      "description": "📜 De la lettre au pigeon voyageur : explorez les moyens de transmettre des ordres en pleine guerre.",
-            "coords": [43.0943, 5.89285]
-
-    },
-    {
-      "id": 6,
-      "title": "PO6 : La fin du fort",
-      "description": "🎖️ Le Fort Napoléon, de l’occupation allemande à son ouverture au public : découvrez sa renaissance !",
-      "coords": [43.09365, 5.89315]
-    }
-  ]
-  
+  {
+    "id": 1,
+    "title": "PO1 : Les Débuts du Fort",
+    "description": "✉️ Découvrez comment Napoléon a repris Toulon et fortifié la colline du Caire !",
+    "coords": [
+      43.09405,
+      5.89375
+    ]
+  },
+  {
+    "id": 2,
+    "title": "PO2 : Immersion dans le fort",
+    "description": "✨ Plongez dans une visite immersive à 360° des couloirs et casemates !",
+    "coords": [
+      43.094425,
+      5.894
+    ]
+  },
+  {
+    "id": 3,
+    "title": "PO3 : L'architecture du Fort",
+    "description": "🏰 Apprenez pourquoi le fort a la forme d’une étoile et comment il se camoufle dans la colline !",
+    "coords": [
+      43.0945,
+      5.89345
+    ]
+  },
+  {
+    "id": 4,
+    "title": "PO4 : L'attaque dans les tranchées",
+    "description": "💥 Revivez une scène de bataille racontée à travers un livre animé !",
+    "coords": [
+      43.09478,
+      5.893578
+    ]
+  },
+  {
+    "id": 5,
+    "title": "PO5 : Les moyens de communications",
+    "description": "📜 De la lettre au pigeon voyageur : explorez les moyens de transmettre des ordres en pleine guerre.",
+    "coords": [
+      43.0943,
+      5.89285
+    ]
+  },
+  {
+    "id": 6,
+    "title": "PO6 : La fin du fort",
+    "description": "🎖️ Le Fort Napoléon, de l’occupation allemande à son ouverture au public : découvrez sa renaissance !",
+    "coords": [
+      43.09365,
+      5.89315
+    ]
+  }
+]

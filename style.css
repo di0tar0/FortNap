@@ -1,71 +1,80 @@
 @font-face {
   font-family: 'Chunky Felt';
   src: url('font/ChunkyFelt.woff2') format('woff2'),
-       url('font/ChunkyFelt.woff') format('woff');
+    url('font/ChunkyFelt.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-:root{
-      --main: #e9dcc5;
-      --black: #000000;
-      --white: #ffffff;
-    }
+:root {
+  --main: #e9dcc5;
+  --black: #000000;
+  --white: #ffffff;
+}
 
 
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
-    }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
 
-    h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Chunky Felt', cursive;
 }
 
-    #map {
-      width: 100%;
-      height: 100%;
-      display: none;
-    }
+#map {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
 
-    #loading-screen {
-      position: fixed;
-      inset: 0;
-      background: var(--main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10002;
-      padding: 10px;
-    }
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #1C612F;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10002;
+  padding: 10px;
+}
 
-    #loading-screen img {
-    animation: pulse infinite ease-in-out;
-    max-width: 400px;
-    width: 90%;    }
+#loading-screen img {
+  animation: pulse infinite ease-in-out;
+  max-width: 400px;
+  width: 90%;
+}
 
-    @keyframes pulse {
-      0%,100% {
-        opacity: 0.5;
-      }
-      50% {
-        opacity: 1;
-      }
-    }
+@keyframes pulse {
 
-    #authorization-popup {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+#authorization-popup {
   position: fixed;
   inset: 0;
   z-index: 10001;
   display: flex;
   justify-content: center;
   align-items: center;
-padding: 10px;
+  padding: 10px;
 }
 
 .popup-wrapper {
@@ -103,11 +112,11 @@ padding: 10px;
 }
 
 .popup-text {
-    display: flex;
-    gap: 1vh;
-    flex-direction: column;
-    text-align: center;
-    padding: 10px;
+  display: flex;
+  gap: 1vh;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px;
 }
 
 .popup-text h2 {
@@ -119,7 +128,7 @@ padding: 10px;
 .popup-text p {
   font-size: 16px;
   line-height: 1.5;
-   font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .popup-text .highlight {
@@ -159,182 +168,182 @@ padding: 10px;
   font-family: 'Poppins', sans-serif;
 }
 
-    #authorize-btn:hover {
-      background: #0097a7;
-    }
+#authorize-btn:hover {
+  background: #0097a7;
+}
 
-    #info-btn {
-      position: fixed;
-      top: 30px;
-      right: 20px;
-      width: 60px;
-      height: auto;
-      z-index: 9999;
-      cursor: pointer;
-      filter: drop-shadow(2px 2px 10px var(--main)) drop-shadow(2px -2px 10px var(--main)) drop-shadow(-2px 2px 10px var(--main)) drop-shadow(-2px -2px 10px var(--main));
-    }
+#info-btn {
+  position: fixed;
+  top: 30px;
+  right: 20px;
+  width: 60px;
+  height: auto;
+  z-index: 9999;
+  cursor: pointer;
+  filter: drop-shadow(2px 2px 10px var(--main)) drop-shadow(2px -2px 10px var(--main)) drop-shadow(-2px 2px 10px var(--main)) drop-shadow(-2px -2px 10px var(--main));
+}
 
-    #close-btn {
-      position: fixed;
-      top: 30px;
-      left: 20px;
-      width: 60px;
-      height: auto;
-      z-index: 10004;
-      cursor: pointer;
-      transform: translateY(-200%);
-      transition: transform 0.4s ease-in-out;
-      filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
+#close-btn {
+  position: fixed;
+  top: 30px;
+  left: 20px;
+  width: 60px;
+  height: auto;
+  z-index: 10004;
+  cursor: pointer;
+  transform: translateY(-200%);
+  transition: transform 0.4s ease-in-out;
+  filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(2px -2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(-2px -2px 5px rgba(0, 0, 0, 0.5));
 
-      }
+}
 
-    #close-btn.show {
-      transform: translateY(0);
-    }
+#close-btn.show {
+  transform: translateY(0);
+}
 
-    #info-popup {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      height: 80vh;
-      background-image: url(img/base.png);
-      background-size: cover;
-      background-position: center;
-      display: none;
-        justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      transform: translateY(100%);
-      transition: transform 0.4s ease-in-out;
-      flex-direction: column;
-    padding-top: 100px;
-    }
+#info-popup {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 80vh;
+  background-image: url(img/base.png);
+  background-size: cover;
+  background-position: center;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transform: translateY(100%);
+  transition: transform 0.4s ease-in-out;
+  flex-direction: column;
+  padding-top: 100px;
+}
 
-    #info-popup.show {
-      transform: translateY(0);
-        display: flex;
-    flex-direction: column;
-    }
+#info-popup.show {
+  transform: translateY(0);
+  display: flex;
+  flex-direction: column;
+}
 
-    .leaflet-control-zoom-in::before {
-      content: "";
-      display: inline-block;
-      background-image: url("img/zoom/+.svg");
-      background-size: cover;
-      width: 35px;
-      height: 31px;
-      margin-left: 3px;
-    }
+.leaflet-control-zoom-in::before {
+  content: "";
+  display: inline-block;
+  background-image: url("img/zoom/+.svg");
+  background-size: cover;
+  width: 35px;
+  height: 31px;
+  margin-left: 3px;
+}
 
-    .leaflet-control-zoom {
-      display: inline-flex;
-      background-image: url(img/zoom/base.svg);
-      background-size: cover;
-      width: 50px;
-      height: 130px;
-      padding-top: 26px;
-      padding-left: 4px;
-      flex-direction: column;
-      gap: 7%;
-      filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
-     }
+.leaflet-control-zoom {
+  display: inline-flex;
+  background-image: url(img/zoom/base.svg);
+  background-size: cover;
+  width: 50px;
+  height: 130px;
+  padding-top: 26px;
+  padding-left: 4px;
+  flex-direction: column;
+  gap: 7%;
+  filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
+}
 
-    .leaflet-control-zoom-out::before {
-      content: "";
-      display: inline-block;
-      background-image: url("img/zoom/-.svg");
-      background-size: cover;
-      width: 44px;
-      height: 70px;
-    }
+.leaflet-control-zoom-out::before {
+  content: "";
+  display: inline-block;
+  background-image: url("img/zoom/-.svg");
+  background-size: cover;
+  width: 44px;
+  height: 70px;
+}
 
-    .leaflet-touch .leaflet-control-zoom-in,
-    .leaflet-touch .leaflet-control-zoom-out {
-      font-size: 0;
-    }
+.leaflet-touch .leaflet-control-zoom-in,
+.leaflet-touch .leaflet-control-zoom-out {
+  font-size: 0;
+}
 
-    .leaflet-touch .leaflet-bar a {
-      height: 35px;
-    }
+.leaflet-touch .leaflet-bar a {
+  height: 35px;
+}
 
-    .leaflet-bar a {
-      border-bottom: unset;
-      background-color: unset;
-    }
+.leaflet-bar a {
+  border-bottom: unset;
+  background-color: unset;
+}
 
-    .leaflet-bar a:hover,
-    .leaflet-bar b:hover,
-    .leaflet-bar a.leaflet-disabled,
-    .leaflet-bar b.leaflet-disabled {
-      background-color: unset;
-    }
+.leaflet-bar a:hover,
+.leaflet-bar b:hover,
+.leaflet-bar a.leaflet-disabled,
+.leaflet-bar b.leaflet-disabled {
+  background-color: unset;
+}
 
-    .leaflet-left .leaflet-control {
-      margin-left: 0;
-    }
+.leaflet-left .leaflet-control {
+  margin-left: 0;
+}
 
-    .leaflet-top .leaflet-control {
-      margin-top: 120px;
-    }
+.leaflet-top .leaflet-control {
+  margin-top: 120px;
+}
 
-    .leaflet-touch .leaflet-bar {
-      border: unset;
-          display: none;
-    }
+.leaflet-touch .leaflet-bar {
+  border: unset;
+  display: none;
+}
 
-    .info-card {
-      color: white;
-      border-bottom: 1px solid #eee;
-      padding: 10px 20px;
-      width: 80%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-direction: row;
-    }
+.info-card {
+  color: white;
+  border-bottom: 1px solid #eee;
+  padding: 10px 20px;
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
 
-    .info-card .text {
-      flex: 1;
-    }
+.info-card .text {
+  flex: 1;
+}
 
-    .info-card h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: bold;
-    }
+.info-card h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
 
-    .info-card p {
-      margin: 3px 0;
-      font-size: 14px;
-    }
+.info-card p {
+  margin: 3px 0;
+  font-size: 14px;
+}
 
-    .info-card img {
-      width: 54px;
-      height: 54px;
-    }
+.info-card img {
+  width: 54px;
+  height: 54px;
+}
 
-    #progress-container {
-    position: fixed;
-    bottom: 0;
-    z-index: 9999;
-    text-align: center;
-    color: black;
-    font-size: 16px;
-    width: 100%;
-    background-color: var(--main);
-    padding-top: 10px;
-    padding-bottom: 15px;
-    filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
+#progress-container {
+  position: fixed;
+  bottom: 0;
+  z-index: 9999;
+  text-align: center;
+  color: black;
+  font-size: 16px;
+  width: 100%;
+  background-color: var(--main);
+  padding-top: 10px;
+  padding-bottom: 15px;
+  filter: drop-shadow(1px 1px 10px var(--main)) drop-shadow(1px -1px 10px var(--main)) drop-shadow(-1px 1px 10px var(--main)) drop-shadow(-1px -1px 10px var(--main))
 }
 
 #progress-bar {
   width: 100%;
   max-width: 600px;
-  aspect-ratio:  100 / 15; 
+  aspect-ratio: 100 / 15;
   background: url(img/bar/bar0.svg) center / contain no-repeat;
   margin: 0 auto;
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #popup-overlay {
@@ -342,5 +351,5 @@ padding: 10px;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10000;
-  display: none; 
+  display: none;
 }

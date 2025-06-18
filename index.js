@@ -5,7 +5,7 @@ let markers = [];
 const totalMarkers = 6;
 const closeBtn = document.getElementById('close-btn');
 
-  const notifiedMarkers = new Set();
+const notifiedMarkers = new Set();
 
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -36,15 +36,15 @@ window.addEventListener('load', () => {
   const carouselImage = document.getElementById('carousel-image');
 
   if (nextBtn && prevBtn && carouselPopup && carouselImage) {
-nextBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  changeSlide(1);
-});
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      changeSlide(1);
+    });
 
-prevBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  changeSlide(-1);
-});
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      changeSlide(-1);
+    });
 
   }
 });
@@ -162,7 +162,7 @@ function initMovement() {
       userCircle.setLatLng(userPos);
       map.setView(userPos, map.getZoom(), { animate: false });
 
-    setInterval(checkProximityToMarkers, 50);
+      setInterval(checkProximityToMarkers, 50);
 
     },
     (error) => {
@@ -226,28 +226,28 @@ function showMarkerPopup(marker) {
   popup.style.display = 'flex';
 
   play.onclick = () => {
-  notifyAndTrack(marker.id);
-  if (marker.id === 2) {
-    window.location.href = 'POI/360poi.html';
-    return;
-  }
+    notifyAndTrack(marker.id);
+    if (marker.id === 2) {
+      window.location.href = 'POI/360poi.html';
+      return;
+    }
 
-   if (marker.id === 4) {
-    showCarousel();
-    toggleCloseBtn(true);
-    return;
-  }
+    if (marker.id === 4) {
+      showCarousel();
+      toggleCloseBtn(true);
+      return;
+    }
 
-if (marker.id === 5) {
-    toggleCloseBtn(true);
-  const imagePopup = document.getElementById('image-popup');
-  const image = document.getElementById('popup-image');
+    if (marker.id === 5) {
+      toggleCloseBtn(true);
+      const imagePopup = document.getElementById('image-popup');
+      const image = document.getElementById('popup-image');
 
-  image.src = 'img/vauban/vauban.png'; 
-  imagePopup.style.display = 'block';
-  document.getElementById('popup-overlay').style.display = 'block';
-  return;
-}
+      image.src = 'img/vauban/vauban.png';
+      imagePopup.style.display = 'block';
+      document.getElementById('popup-overlay').style.display = 'block';
+      return;
+    }
 
     const videoPopup = document.getElementById('video-popup');
     const video = document.getElementById('popup-video');
@@ -257,24 +257,25 @@ if (marker.id === 5) {
     videoSource.src = videoSrc;
     video.load();
     video.play().then(() => {
-    toggleCloseBtn(true);
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if (video.webkitRequestFullscreen) {
-      video.webkitRequestFullscreen();
-    } else if (video.msRequestFullscreen) {
-      video.msRequestFullscreen();
-    }})
+      toggleCloseBtn(true);
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+    })
 
     videoPopup.style.display = 'flex';
   };
 
-requestAnimationFrame(() => {
-  setTimeout(() => {
-    document.removeEventListener('click', onClickOutside);
-    document.addEventListener('click', onClickOutside);
-  }, 0);
-});
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.removeEventListener('click', onClickOutside);
+      document.addEventListener('click', onClickOutside);
+    }, 0);
+  });
 }
 
 function onClickOutside(e) {
@@ -331,50 +332,50 @@ function generateInfoCards() {
   });
 
   const playButtons = document.querySelectorAll('.play-btn');
-playButtons.forEach(button => {
-  button.addEventListener('click', (e) => {
-    e.stopPropagation(); 
-    const id = parseInt(button.dataset.id);
+  playButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = parseInt(button.dataset.id);
 
-    if (id === 2) {
-      window.location.href = 'POI/360poi.html';
-      return;
-    }
+      if (id === 2) {
+        window.location.href = 'POI/360poi.html';
+        return;
+      }
 
-    if (id === 4) {
-      showCarousel();
+      if (id === 4) {
+        showCarousel();
+        toggleCloseBtn(true);
+        return;
+      }
+
+      if (id === 5) {
+        toggleCloseBtn(true);
+        const imagePopup = document.getElementById('image-popup');
+        const image = document.getElementById('popup-image');
+
+        image.src = 'img/vauban/vauban.png';
+        imagePopup.style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
+        return;
+      }
+
+      const videoSrc = `videos/video${id}.mp4`;
+      const videoPopup = document.getElementById('video-popup');
+      const video = document.getElementById('popup-video');
+      const source = document.getElementById('video-source');
+
+      source.src = videoSrc;
+      video.load();
+      video.play().then(() => {
+        if (video.requestFullscreen) video.requestFullscreen();
+        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+        else if (video.msRequestFullscreen) video.msRequestFullscreen();
+      });
+
+      videoPopup.style.display = 'flex';
       toggleCloseBtn(true);
-      return;
-    }
-
-    if (id === 5) {
-    toggleCloseBtn(true);
-  const imagePopup = document.getElementById('image-popup');
-  const image = document.getElementById('popup-image');
-
-  image.src = 'img/vauban/vauban.png'; 
-  imagePopup.style.display = 'block';
-  document.getElementById('popup-overlay').style.display = 'block';
-  return;
-    }
-
-    const videoSrc = `videos/video${id}.mp4`;
-    const videoPopup = document.getElementById('video-popup');
-    const video = document.getElementById('popup-video');
-    const source = document.getElementById('video-source');
-
-    source.src = videoSrc;
-    video.load();
-    video.play().then(() => {
-      if (video.requestFullscreen) video.requestFullscreen();
-      else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-      else if (video.msRequestFullscreen) video.msRequestFullscreen();
     });
-
-    videoPopup.style.display = 'flex';
-    toggleCloseBtn(true);
   });
-});
 
 }
 
@@ -412,7 +413,7 @@ function closeAllPopups() {
   if (carouselPopup) carouselPopup.style.display = 'none';
 
   const vaubanPopup = document.getElementById('image-popup');
-if (vaubanPopup) vaubanPopup.style.display = 'none';
+  if (vaubanPopup) vaubanPopup.style.display = 'none';
 }
 
 document.getElementById('close-btn').addEventListener('click', closeAllPopups);
@@ -420,7 +421,7 @@ document.getElementById('close-btn').addEventListener('click', closeAllPopups);
 
 function resetSeenMarkers() {
   localStorage.removeItem('seenMarkers');
-  location.reload(); 
+  location.reload();
 }
 
 const infoBtn = document.getElementById('info-btn');
@@ -453,7 +454,7 @@ function showCarousel() {
   const image = document.getElementById('carousel-image');
   popup.style.display = 'flex';
   image.src = carouselImages[currentSlide];
-  document.getElementById('popup-overlay').style.display = 'block'; 
+  document.getElementById('popup-overlay').style.display = 'block';
 }
 
 function hideCarousel() {
@@ -497,10 +498,10 @@ document.getElementById('zqsd-btn').addEventListener('click', () => {
   if (userCircle) userCircle.setLatLng(userPos);
   map.setView(userPos, map.getZoom());
 
-if (geoWatchId !== null) {
-  navigator.geolocation.clearWatch(geoWatchId);
-  geoWatchId = null;
-}
+  if (geoWatchId !== null) {
+    navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
+  }
 
   document.getElementById('authorization-popup').style.display = 'none';
   document.getElementById('popup-overlay').style.display = 'none';
@@ -512,7 +513,7 @@ if (geoWatchId !== null) {
 
 
 function enableZQSDMovement() {
-  const moveSpeed = 0.000005; 
+  const moveSpeed = 0.000005;
   const keys = { z: false, q: false, s: false, d: false };
 
   function move() {
