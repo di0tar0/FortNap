@@ -61,7 +61,6 @@ a, a:hover, a:active, a:visited {
   right: 50px;
 }
 
-/* If there is a fullscreen button the title bar must make space for it */
 body.fullscreen-enabled #titleBar {
   right: 80px;
 }
@@ -70,7 +69,6 @@ body.fullscreen-enabled.mobile #titleBar {
   right: 100px;
 }
 
-/* If there are multiple scenes the title bar must make space for the scene list toggle */
 body.multiple-scenes #titleBar {
   left: 40px;
 }
@@ -179,7 +177,6 @@ body.fullscreen-enabled #fullscreenToggle {
   height: 50px;
 }
 
-/* If there is a fullscreen button, autorotate must placed a bit to the left */
 body.fullscreen-enabled #autorotateToggle {
   right: 40px;
 }
@@ -229,8 +226,9 @@ body.fullscreen-enabled.mobile #autorotateToggle {
 }
 
 .mobile #sceneListToggle {
-  width: 50px;
-  height: 50px;
+    width: 50px;
+    height: 50px;
+    z-index: 50;
 }
 
 #sceneListToggle .text {
@@ -287,6 +285,7 @@ body.fullscreen-enabled.mobile #autorotateToggle {
 
 .mobile #sceneList {
   padding-top: 50px;
+  z-index: 50;
 }
 
 #sceneList .scenes {
@@ -348,12 +347,9 @@ body.fullscreen-enabled.mobile #autorotateToggle {
   background-color: #FBC53C;
 }
 
-/* Hide scene list when only a single scene exists */
 body.single-scene #sceneList, body.single-scene #sceneListToggle {
   display: none;
 }
-
-/* Link hotspot */
 
 .link-hotspot {
   width: 60px;
@@ -385,7 +381,7 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
 .link-hotspot-tooltip {
   position: absolute;
   left: 100%;
-  top: 14px; /* ( 60 - (16 + 2*8) ) / 2 */
+  top: 14px;
 
   margin-left: 3px;
 
@@ -425,7 +421,7 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
 }
 
 .mobile .link-hotspot {
-  top: 19px; /* ( 70 - (16 + 2*8) ) / 2 */
+  top: 19px; 
 }
 
 .no-touch .link-hotspot:hover .link-hotspot-tooltip {
@@ -435,7 +431,6 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
   transform: translateX(0);
 }
 
-/* Prevent tooltip from triggering */
 .link-hotspot-tooltip {
   pointer-events: none;
 }
@@ -443,15 +438,12 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
   pointer-events: all;
 }
 
-/* Fallback mode without pointer-events (IE8-10) */
 .tooltip-fallback .link-hotspot-tooltip {
   display: none;
 }
 .no-touch .tooltip-fallback .link-hotspot:hover .link-hotspot-tooltip {
   display: block;
 }
-
-/* Info hotspot */
 
 .info-hotspot {
   line-height: 1.2em;
@@ -630,7 +622,6 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
   border-bottom-left-radius: 5px;
   overflow-y: auto;
   visibility: hidden;
-  /* rotate(90deg) causes transition flicker on Firefox 58 */
   -ms-transform: perspective(200px) rotateX(-89.999deg);
   -webkit-transform: perspective(200px) rotateX(-89.999deg);
   transform: perspective(200px) rotateX(-89.999deg);
@@ -666,8 +657,6 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
               transform 0.3s 0.3s,
               visibility 0s 0s;
 }
-
-/* Info hotspot modal */
 
 .desktop .info-hotspot-modal {
   display: none;
@@ -803,8 +792,6 @@ body.single-scene #sceneList, body.single-scene #sceneListToggle {
   transition: opacity 0.3s ease-in-out 0.4s;
 }
 
-/* View control buttons */
-
 .viewControlButton {
   display: none;
   position: absolute;
@@ -821,7 +808,6 @@ body.view-control-buttons .viewControlButton {
   display: block;
 }
 
-/* Hide controls when width is too small */
 @media (max-width: 600px) {
   body.view-control-buttons .viewControlButton {
     display: none;
@@ -836,7 +822,6 @@ body.view-control-buttons .viewControlButton {
   height: 30px;
 }
 
-/* Center is at margin-left: -20px */
 .viewControlButton-1 {
   margin-left: -145px;
 }
@@ -890,17 +875,16 @@ body.view-control-buttons .viewControlButton {
 
 #quitButton:hover {
   background-image: url('img/backgroundhoverbtn.png');
-  color: #FBC53C; /* Jaune sur hover */
+  color: #FBC53C;
 }
 
 #tutorialOverlay {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  z-index: 99999;
+  z-index: 2;
   pointer-events: none;
 }
-
 
 .tutorialSlide {
   position: absolute;
@@ -962,12 +946,9 @@ body.view-control-buttons .viewControlButton {
   }
 }
 
-
-/* Slides 2 et 3 : version plus discrète */
-
 .custom-button-wrapper {
   position: relative;
-  width: 220px; /* adapte si besoin */
+  width: 220px;
   height: 60px;
   margin: 0 auto;
   cursor: pointer;
@@ -1000,11 +981,10 @@ body.view-control-buttons .viewControlButton {
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(3px);
-  z-index: 99998;
+  z-index: 2;
   display: none;
-  pointer-events: none; /* ✅ permet les interactions avec la scène */
-}
-
+  pointer-events: none; 
+} 
 
 #slide-1 {
   z-index: 0;
@@ -1028,19 +1008,19 @@ body.view-control-buttons .viewControlButton {
 #slide-1 h2 {
   font-size: 24px;
   margin-bottom: 18px;
-  color: white; /* Titre Bienvenue en blanc */
+  color: white;
 }
 
 #slide-1 p {
   font-size: 17px;
   margin-top: 40px;
-  padding: 0 10px; /* marge horizontale dans le texte */
+  padding: 0 10px;
   line-height: 1.5;
 }
 
 #btn-step-1 {
   background-image: url('img/boutonbackground.png');
-  background-size: 100%; /* ou cover selon l’effet souhaité */
+  background-size: 100%;
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -1096,9 +1076,7 @@ body.view-control-buttons .viewControlButton {
 
 #sceneListToggle.locked {
   pointer-events: none;
-  opacity: 1; /* effet "grisé" */
+  opacity: 1;
   filter: grayscale(100%);
   cursor: not-allowed;
 }
-
-
