@@ -106,7 +106,7 @@ function initMap() {
 
     userMarker = L.marker(userPos, { icon: userIcon }).addTo(map);
     userCircle = L.circle(userPos, {
-      radius: 10,
+      radius: 1000000,
       color: 'rgb(249, 178, 46)',
       fillColor: 'rgb(249, 178, 46, 0.5)',
       fillOpacity: 0.2,
@@ -301,7 +301,7 @@ function onClickOutside(e) {
 
 
 function generateInfoCards() {
-  const container = document.getElementById('info-popup');
+  const container = document.getElementById('info-popup-content');
   container.innerHTML = '';
 
   const seen = JSON.parse(localStorage.getItem('seenMarkers') || '[]');
